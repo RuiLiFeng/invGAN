@@ -163,10 +163,10 @@ def Inv_UpSample(name, x, scale=False, reverse=False):
             if scale:
                 with tf.variable_scope('ConvScale', reuse=tf.AUTO_REUSE):
                     logdet1 = tf.zeros_like(x)[:, 0, 0, 0]
-                    x1 = invConv2D('invConv1', x, logdet1, reverse=False)
-                    x2 = invConv2D('invConv2', x, logdet1, reverse=False)
-                    x3 = invConv2D('invConv3', x, logdet1, reverse=False)
-                    x4 = invConv2D('invConv4', x, logdet1, reverse=False)
+                    x1, _ = invConv2D('invConv1', x, logdet1, reverse=False)
+                    x2, _ = invConv2D('invConv2', x, logdet1, reverse=False)
+                    x3, _ = invConv2D('invConv3', x, logdet1, reverse=False)
+                    x4, _ = invConv2D('invConv4', x, logdet1, reverse=False)
                     x = tf.concat([x1, x2, x3, x4], axis=3)
             x = upreshape(x)
             logdet = tf.zeros_like(x)[:, 0, 0, 0]
@@ -196,6 +196,20 @@ def downshape(x): # [NHWC], the inverse op of upreshape
     x = tf.transpose(x, [0, 2, 1, 3])
     x = tf.reshape(x, [-1, x.shape[1].value, x.shape[2].value // 2, x.shape[3].value * 2])
     return x
+
+
+#----------------------------------------------------------------------------
+# Quotient invert scale conv2d
+def downscale_conv2d_layer(x, fmaps, reverse=False):
+    """
+    conv2d layer who downscale the size of x. Inverse map will choose an elements from the equivalent class of x,
+    maintains an invert map in the quotient space.
+    :param x: input feature, [NHWC]
+    :param fmaps: output channel nums
+    :param reverse: whether compute reverse
+    :return:
+    """
+    pass
 
 
 #----------------------------------------------------------------------------
