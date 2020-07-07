@@ -81,7 +81,7 @@ def invertible_conv2D_emerging(
             zerodiagonal=True)[::-1, ::-1, ::-1, ::-1].copy()
         mask = tf.constant(mask_np)
 
-        print(mask_np.transpose(3, 2, 0, 1))
+        # print(mask_np.transpose(3, 2, 0, 1))
 
         filter_shape = [ksize, ksize, n_channels, n_channels]
 
