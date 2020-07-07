@@ -150,7 +150,7 @@ def minibatch_stddev_layer(x, group_size=4, num_new_features=1):
 # Invertible Up and sampling
 def Inv_UpSample(name, x, scale=False, reverse=False):
     """
-    Upsample the given inputs by factor 2, but will decrease the channel num by factor of 4, such that
+    Upsample the given inputs by factor 2x2, but will decrease the channel num by factor of 4, such that
     the overall number of units remains unchanged
     :param name: name scope
     :param x: given inputs, [NHWC]
@@ -216,7 +216,7 @@ def downscale_conv2d_layer(x, fmaps, reverse=False):
         logdet = tf.zeros_like(x)[:, 0, 0, 0]
         x, _ = invConv2D('downscaleConv', x, logdet, reverse=False)
         xs = tf.split(x, x.shape[3].value // fmaps, axis=3)
-        x = tf.reduce_sum(xs, axis=3)
+        x = tf.math.add_n(xs) / (x.shape[3].value // fmaps)
     else:
         x = tf.concat([x for _ in range(x.shape[3].value // fmaps)], axis=3)
         logdet = tf.zeros_like(x)[:, 0, 0, 0]
