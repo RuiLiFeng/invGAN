@@ -147,7 +147,7 @@ def minibatch_stddev_layer(x, group_size=4, num_new_features=1):
 
 
 #----------------------------------------------------------------------------
-# Invertible Up and Down sampling
+# Invertible Up and sampling
 def Inv_UpSample(name, x, scale=False, reverse=False):
     """
     Upsample the given inputs by factor 2, but will decrease the channel num by factor of 4, such that
@@ -199,24 +199,59 @@ def downshape(x): # [NHWC], the inverse op of upreshape
 
 
 #----------------------------------------------------------------------------
-# Quotient invert scale conv2d
+# Invert scale conv2d in quotient space
 def downscale_conv2d_layer(x, fmaps, reverse=False):
     """
-    conv2d layer who downscale the size of x. Inverse map will choose an elements from the equivalent class of x,
+    conv2d layer who downscale the channel of x, but keeps spatial size.
+    Inverse map will choose an elements from the equivalent class of x,
     maintains an invert map in the quotient space.
     :param x: input feature, [NHWC]
     :param fmaps: output channel nums
     :param reverse: whether compute reverse
     :return:
     """
-    pass
+    assert x.shape[3].value % fmaps == 0, "fmaps %d of downscale conv2d layer must" \
+                                          " be factor of input channel %d!" % (fmaps, x.shape[3].value)
+    if not reverse:
+        logdet = tf.zeros_like(x)[:, 0, 0, 0]
+        x, _ = invConv2D('downscaleConv', x, logdet, reverse=False)
+        xs = tf.split(x, x.shape[3].value // fmaps, axis=3)
+        x = tf.reduce_sum(xs, axis=3)
+    else:
+        x = tf.concat([x for _ in range(x.shape[3].value // fmaps)], axis=3)
+        logdet = tf.zeros_like(x)[:, 0, 0, 0]
+        x, _ = invConv2D('downscaleConv', x, logdet, reverse=True)
+    return x
+
+
+#----------------------------------------------------------------------------
+def inv_toRGB(x, fin, reverse=False):
+    """
+    ToRGB op with inverse in the quotient space
+    :param x: input [NHWC]
+    :param fin: original input channel num
+    :param reverse:
+    :return:
+    """
+    if not reverse:
+        assert fin == x.shape[3].value
+        logdet = tf.zeros_like(x)[:, 0, 0, 0]
+        x, _ = invConv2D('channel_shuffle', x, logdet, ksize=1, reverse=False)
+        x = x[:, :, :, :-(x.shape[3].value % 3)]
+        x, _ = invConv2D('toRGB', x, logdet, ksize=3, reverse=False)
+    else:
+        logdet = tf.zeros_like(x)[:, 0, 0, 0]
+        x, _ = invConv2D('toRGB', x, logdet, ksize=3, reverse=True)
+        x = tf.concat([x, x[:, :, :, :fin % 3]], axis=3)
+        x, _ = invConv2D('channel_shuffle', x, logdet, ksize=1, reverse=True)
+    return x
 
 
 #----------------------------------------------------------------------------
 # Inv Module Conv
 def inv_module_conv2d_layer(x, up=False, reverse=False):
     if up:
-        x = Inv_UpDownSample('invupdown', x, reverse)
+        x = Inv_UpSample('invupdown', x, reverse)
     else:
         logdet = tf.zeros_like(x)[:, 0, 0, 0]
         x, _ = invConv2D('invConv', x, logdet, reverse)
