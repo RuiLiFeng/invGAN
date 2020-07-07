@@ -200,56 +200,59 @@ def downshape(x): # [NHWC], the inverse op of upreshape
 
 #----------------------------------------------------------------------------
 # Invert scale conv2d in quotient space
-def downscale_conv2d_layer(x, factor, reverse=False):
+def downscale_conv2d_layer(name, x, factor, reverse=False):
     """
     conv2d layer who downscale the channel of x, but keeps spatial size.
     Inverse map will choose an elements from the equivalent class of x,
     maintains an invert map in the quotient space.
+    :param name: name scope
     :param x: input feature, [NHWC]
     :param factor: output channel nums decay factor
     :param reverse: whether compute reverse
     :return:
     """
-
-    if not reverse:
-        assert x.shape[3].value % factor == 0, "factor %d of downscale conv2d layer must" \
-                                              " be factor of input channel %d!" % (factor, x.shape[3].value)
-        logdet = tf.zeros_like(x)[:, 0, 0, 0]
-        x, _ = invConv2D('downscaleConv', x, logdet, reverse=False)
-        xs = tf.split(x, factor, axis=3)
-        x = tf.math.add_n(xs) / factor
-    else:
-        x = tf.concat([x for _ in range(x.shape[3].value * factor)], axis=3)
-        logdet = tf.zeros_like(x)[:, 0, 0, 0]
-        x, _ = invConv2D('downscaleConv', x, logdet, reverse=True)
-    return x
+    with tf.variable_scope(name, reuse=tf.AUTO_REUSE):
+        if not reverse:
+            assert x.shape[3].value % factor == 0, "factor %d of downscale conv2d layer must" \
+                                                  " be factor of input channel %d!" % (factor, x.shape[3].value)
+            logdet = tf.zeros_like(x)[:, 0, 0, 0]
+            x, _ = invConv2D('downscaleConv', x, logdet, reverse=False)
+            xs = tf.split(x, factor, axis=3)
+            x = tf.math.add_n(xs) / factor
+        else:
+            x = tf.concat([x for _ in range(x.shape[3].value * factor)], axis=3)
+            logdet = tf.zeros_like(x)[:, 0, 0, 0]
+            x, _ = invConv2D('downscaleConv', x, logdet, reverse=True)
+        return x
 
 
 #----------------------------------------------------------------------------
-def inv_toRGB(x, fin, reverse=False):
+def inv_toRGB(name, x, fin, reverse=False):
     """
     ToRGB op with inverse in the quotient space
+    :param name: name scope
     :param x: input [NHWC]
     :param fin: original input channel num
     :param reverse:
     :return:
     """
-    if not reverse:
-        assert fin == x.shape[3].value
-        logdet = tf.zeros_like(x)[:, 0, 0, 0]
-        x, _ = invConv2D('channel_shuffle1', x, logdet, ksize=1, reverse=False)
-        x = x[:, :, :, :-(x.shape[3].value % 3)]
-        xs = tf.split(x, x.shape[3].value // 3, axis=3)
-        x = tf.math.add_n(xs) / (x.shape[3].value // 3)
-        x, _ = invConv2D('toRGB', x, logdet, ksize=3, reverse=False)
+    with tf.variable_scope(name, reuse=tf.AUTO_REUSE):
+        if not reverse:
+            assert fin == x.shape[3].value
+            logdet = tf.zeros_like(x)[:, 0, 0, 0]
+            x, _ = invConv2D('channel_shuffle1', x, logdet, ksize=1, reverse=False)
+            x = x[:, :, :, :-(x.shape[3].value % 3)]
+            xs = tf.split(x, x.shape[3].value // 3, axis=3)
+            x = tf.math.add_n(xs) / (x.shape[3].value // 3)
+            x, _ = invConv2D('toRGB', x, logdet, ksize=3, reverse=False)
 
-    else:
-        logdet = tf.zeros_like(x)[:, 0, 0, 0]
-        x, _ = invConv2D('toRGB', x, logdet, ksize=3, reverse=True)
-        xs = [x for _ in range(fin // 3)] + x[:, :, :, :fin % 3]
-        x = tf.concat(xs, axis=3)
-        x, _ = invConv2D('toRGB', x, logdet, ksize=1, reverse=True)
-    return x
+        else:
+            logdet = tf.zeros_like(x)[:, 0, 0, 0]
+            x, _ = invConv2D('toRGB', x, logdet, ksize=3, reverse=True)
+            xs = [x for _ in range(fin // 3)] + x[:, :, :, :fin % 3]
+            x = tf.concat(xs, axis=3)
+            x, _ = invConv2D('toRGB', x, logdet, ksize=1, reverse=True)
+        return x
 
 
 #----------------------------------------------------------------------------
