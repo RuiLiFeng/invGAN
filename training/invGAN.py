@@ -220,7 +220,7 @@ def downscale_conv2d_layer(name, x, factor, reverse=False):
             xs = tf.split(x, factor, axis=3)
             x = tf.math.add_n(xs) / factor
         else:
-            x = tf.concat([x for _ in range(x.shape[3].value * factor)], axis=3)
+            x = tf.concat([x for _ in range(factor)], axis=3)
             logdet = tf.zeros_like(x)[:, 0, 0, 0]
             x, _ = invConv2D('downscaleConv', x, logdet, reverse=True)
         return x
@@ -249,7 +249,7 @@ def inv_toRGB(name, x, fin, reverse=False):
         else:
             logdet = tf.zeros_like(x)[:, 0, 0, 0]
             x, _ = invConv2D('toRGB', x, logdet, ksize=3, reverse=True)
-            xs = [x for _ in range(fin // 3)] + x[:, :, :, :fin % 3]
+            xs = [x for _ in range(fin // 3)] + [x[:, :, :, :fin % 3]]
             x = tf.concat(xs, axis=3)
             x, _ = invConv2D('toRGB', x, logdet, ksize=1, reverse=True)
         return x
