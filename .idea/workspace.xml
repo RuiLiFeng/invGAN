@@ -68,8 +68,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/training/invGAN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="415">
-              <caret line="202" column="26" selection-start-line="202" selection-start-column="4" selection-end-line="202" selection-end-column="26" />
+            <state relative-caret-position="36">
+              <caret line="250" column="65" selection-start-line="250" selection-start-column="65" selection-end-line="250" selection-end-column="65" />
               <folding>
                 <element signature="e#285#303#0" expanded="true" />
               </folding>
@@ -223,7 +223,7 @@
       <option name="presentableId" value="Default" />
       <updated>1593352294416</updated>
       <workItem from="1593352319590" duration="14134000" />
-      <workItem from="1593691255557" duration="30716000" />
+      <workItem from="1593691255557" duration="31235000" />
     </task>
     <servers />
   </component>
@@ -233,7 +233,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="44850000" />
+    <option name="totallyTimeSpent" value="45369000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -425,8 +425,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/training/invGAN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="415">
-          <caret line="202" column="26" selection-start-line="202" selection-start-column="4" selection-end-line="202" selection-end-column="26" />
+        <state relative-caret-position="36">
+          <caret line="250" column="65" selection-start-line="250" selection-start-column="65" selection-end-line="250" selection-end-column="65" />
           <folding>
             <element signature="e#285#303#0" expanded="true" />
           </folding>

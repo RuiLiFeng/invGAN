@@ -240,7 +240,7 @@ def inv_toRGB(name, x, fin, reverse=False):
         if not reverse:
             assert fin == x.shape[3].value
             logdet = tf.zeros_like(x)[:, 0, 0, 0]
-            x, _ = invConv2D('channel_shuffle1', x, logdet, ksize=1, reverse=False)
+            x, _ = invConv2D('channel_shuffle', x, logdet, ksize=1, reverse=False)
             x = x[:, :, :, :-(x.shape[3].value % 3)]
             xs = tf.split(x, x.shape[3].value // 3, axis=3)
             x = tf.math.add_n(xs) / (x.shape[3].value // 3)
@@ -251,7 +251,7 @@ def inv_toRGB(name, x, fin, reverse=False):
             x, _ = invConv2D('toRGB', x, logdet, ksize=3, reverse=True)
             xs = [x for _ in range(fin // 3)] + [x[:, :, :, :fin % 3]]
             x = tf.concat(xs, axis=3)
-            x, _ = invConv2D('toRGB', x, logdet, ksize=1, reverse=True)
+            x, _ = invConv2D('channel_shuffle', x, logdet, ksize=1, reverse=True)
         return x
 
 
