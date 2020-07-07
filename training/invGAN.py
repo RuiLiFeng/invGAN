@@ -12,6 +12,8 @@ import dnnlib
 import dnnlib.tflib as tflib
 from dnnlib.tflib.ops.upfirdn_2d import upsample_2d, downsample_2d, upsample_conv_2d, conv_downsample_2d
 from dnnlib.tflib.ops.fused_bias_act import fused_bias_act
+from training.iconv2d.conv2d_bijectors import invertible_conv2D_emerging as invConv2D
+
 
 # NOTE: Do not import any application-specific modules here!
 # Specify all network parameters as kwargs.
@@ -142,6 +144,97 @@ def minibatch_stddev_layer(x, group_size=4, num_new_features=1):
     y = tf.cast(y, x.dtype)                                 # [Mn11]  Cast back to original data type.
     y = tf.tile(y, [group_size, 1, s[2], s[3]])             # [NnHW]  Replicate over group and pixels.
     return tf.concat([x, y], axis=1)                        # [NCHW]  Append as new fmap.
+
+
+#----------------------------------------------------------------------------
+# Invertible Up and Down sampling
+def Inv_UpSample(name, x, scale=False, reverse=False):
+    """
+    Upsample the given inputs by factor 2, but will decrease the channel num by factor of 4, such that
+    the overall number of units remains unchanged
+    :param name: name scope
+    :param x: given inputs, [NHWC]
+    :param scale: if true, scale the spatial size by factor of 2
+    :param reverse: up sampling or down sampling
+    :return: output tensor, [NHWC]
+    """
+    with tf.variable_scope(name, reuse=tf.AUTO_REUSE):
+        if not reverse:
+            if scale:
+                with tf.variable_scope('ConvScale', reuse=tf.AUTO_REUSE):
+                    logdet1 = tf.zeros_like(x)[:, 0, 0, 0]
+                    x1 = invConv2D('invConv1', x, logdet1, reverse=False)
+                    x2 = invConv2D('invConv2', x, logdet1, reverse=False)
+                    x3 = invConv2D('invConv3', x, logdet1, reverse=False)
+                    x4 = invConv2D('invConv4', x, logdet1, reverse=False)
+                    x = tf.concat([x1, x2, x3, x4], axis=3)
+            x = upreshape(x)
+            logdet = tf.zeros_like(x)[:, 0, 0, 0]
+            x, _ = invConv2D('invConv', x, logdet, reverse=False)
+        else:
+            logdet = tf.zeros_like(x)[:, 0, 0, 0]
+            x, _ = invConv2D('invConv', x, logdet, reverse=True)
+            x = downshape(x)
+            if scale:
+                with tf.variable_scope('ConvScale', reuse=tf.AUTO_REUSE):
+                    logdet = tf.zeros_like(x)[:, 0, 0, 0]
+                    x, _ = invConv2D('invConv1', x[:, :, :, :x.shape[3].value // 4], logdet, reverse=True)
+        return x
+
+
+def upreshape(x): # [NHWC]
+    x = tf.reshape(x, [-1, x.shape[1].value, x.shape[2].value * 2, x.shape[3].value // 2])
+    x = tf.transpose(x, [0, 2, 1, 3])
+    x = tf.reshape(x, [-1, x.shape[1].value, x.shape[2].value * 2, x.shape[3].value // 2])
+    x = tf.transpose(x, [0, 2, 1, 3])
+    return x
+
+
+def downshape(x): # [NHWC], the inverse op of upreshape
+    x = tf.transpose(x, [0, 2, 1, 3])
+    x = tf.reshape(x, [-1, x.shape[1].value, x.shape[2].value // 2, x.shape[3].value * 2])
+    x = tf.transpose(x, [0, 2, 1, 3])
+    x = tf.reshape(x, [-1, x.shape[1].value, x.shape[2].value // 2, x.shape[3].value * 2])
+    return x
+
+
+#----------------------------------------------------------------------------
+# Inv Module Conv
+def inv_module_conv2d_layer(x, up=False, reverse=False):
+    if up:
+        x = Inv_UpDownSample('invupdown', x, reverse)
+    else:
+        logdet = tf.zeros_like(x)[:, 0, 0, 0]
+        x, _ = invConv2D('invConv', x, logdet, reverse)
+    return x
+
+
+#----------------------------------------------------------------------------
+# Invert Dense layer
+def inv_dense_layer(x, fmaps, gain=1, use_wscale=True,
+                    lrmul=1, weight_var='weight', reverse=False):
+    if len(x.shape) > 2:
+        x = tf.reshape(x, [-1, np.prod([d.value for d in x.shape[1:]])])
+    assert x.shape[1].value == fmaps
+    w = get_weight([x.shape[1].value, fmaps], gain=gain, use_wscale=use_wscale, lrmul=lrmul, weight_var=weight_var)
+    w = tf.cast(w, x.dtype)
+
+    if reverse:
+        w = tf.matrix_inverse(w)
+
+    return tf.matmul(x, w)
+
+
+#----------------------------------------------------------------------------
+# Invert bias act
+def inv_bias_act(x, act='linear', alpha=0.2, gain=None, lrmul=1, bias_var='bias', reverse=False):
+    assert act in ['linear', 'lrelu']
+    b = tf.get_variable(bias_var, shape=[x.shape[1]], initializer=tf.initializers.zeros()) * lrmul
+    if reverse:
+        b = -b
+        alpha = 1.0 / alpha
+    return fused_bias_act(x, b=tf.cast(b, x.dtype), act=act, alpha=alpha, gain=gain)
+
 
 #----------------------------------------------------------------------------
 # Main generator network.
@@ -451,28 +544,41 @@ def G_synthesis_stylegan2(
         noise_inputs.append(tf.get_variable('noise%d' % layer_idx, shape=shape, initializer=tf.initializers.random_normal(), trainable=False))
 
     # Single convolution layer with all the bells and whistles.
-    def layer(x, layer_idx, fmaps, kernel, up=False):
-        x = modulated_conv2d_layer(x, dlatents_in[:, layer_idx], fmaps=fmaps,
-                                   kernel=kernel, up=up, resample_kernel=resample_kernel, fused_modconv=fused_modconv)
-        if randomize_noise:
-            noise = tf.random_normal([tf.shape(x)[0], 1, x.shape[2], x.shape[3]], dtype=x.dtype)
-        else:
-            noise = tf.cast(noise_inputs[layer_idx], x.dtype)
-        noise_strength = tf.get_variable('noise_strength', shape=[], initializer=tf.initializers.zeros())
-        x += noise * tf.cast(noise_strength, x.dtype)
-        return apply_bias_act(x, act=act)
+    # def layer(x, layer_idx, fmaps, kernel, up=False):
+    #     x = modulated_conv2d_layer(x, dlatents_in[:, layer_idx], fmaps=fmaps,
+    #                                kernel=kernel, up=up, resample_kernel=resample_kernel, fused_modconv=fused_modconv)
+    #     if randomize_noise:
+    #         noise = tf.random_normal([tf.shape(x)[0], 1, x.shape[2], x.shape[3]], dtype=x.dtype)
+    #     else:
+    #         noise = tf.cast(noise_inputs[layer_idx], x.dtype)
+    #     noise_strength = tf.get_variable('noise_strength', shape=[], initializer=tf.initializers.zeros())
+    #     x += noise * tf.cast(noise_strength, x.dtype)
+    #     return apply_bias_act(x, act=act)
+    def layer(x, layer_idx, fmaps, up=False):
+        s = dlatents_in[:, layer_idx]
+        s = inv_dense_layer(s, fmaps=fmaps, weight_var='mod_weight')
+        s = inv_bias_act(s, bias_var='mod_bias') + 1
+        x *= tf.cast(s[:, np.newaxis, np.newaxis, :], x.dtype)
+        x = inv_module_conv2d_layer(x, up)
+        return x
 
     # Building blocks for main layers.
+    # def block(x, res): # res = 3..resolution_log2
+    #     t = x
+    #     with tf.variable_scope('Conv0_up'):
+    #         x = layer(x, layer_idx=res*2-5, fmaps=nf(res-1), kernel=3, up=True)
+    #     with tf.variable_scope('Conv1'):
+    #         x = layer(x, layer_idx=res*2-4, fmaps=nf(res-1), kernel=3)
+    #     if architecture == 'resnet':
+    #         with tf.variable_scope('Skip'):
+    #             t = conv2d_layer(t, fmaps=nf(res-1), kernel=1, up=True, resample_kernel=resample_kernel)
+    #             x = (x + t) * (1 / np.sqrt(2))
+    #     return x
     def block(x, res): # res = 3..resolution_log2
-        t = x
         with tf.variable_scope('Conv0_up'):
-            x = layer(x, layer_idx=res*2-5, fmaps=nf(res-1), kernel=3, up=True)
+            x = layer(x, layer_idx=res*2-5, fmaps=nf(res-1), up=True)
         with tf.variable_scope('Conv1'):
-            x = layer(x, layer_idx=res*2-4, fmaps=nf(res-1), kernel=3)
-        if architecture == 'resnet':
-            with tf.variable_scope('Skip'):
-                t = conv2d_layer(t, fmaps=nf(res-1), kernel=1, up=True, resample_kernel=resample_kernel)
-                x = (x + t) * (1 / np.sqrt(2))
+            x = layer(x, layer_idx=res*2-4, fmaps=nf(res-1))
         return x
     def upsample(y):
         with tf.variable_scope('Upsample'):
@@ -482,24 +588,36 @@ def G_synthesis_stylegan2(
             t = apply_bias_act(modulated_conv2d_layer(x, dlatents_in[:, res*2-3], fmaps=num_channels, kernel=1, demodulate=False, fused_modconv=fused_modconv))
             return t if y is None else y + t
 
+
     # Early layers.
-    y = None
+    # y = None
+    # with tf.variable_scope('4x4'):
+    #     with tf.variable_scope('Const'):
+    #         x = tf.get_variable('const', shape=[1, nf(1), 4, 4], initializer=tf.initializers.random_normal())
+    #         x = tf.tile(tf.cast(x, dtype), [tf.shape(dlatents_in)[0], 1, 1, 1])
+    #     with tf.variable_scope('Conv'):
+    #         x = layer(x, layer_idx=0, fmaps=nf(1), kernel=3)
+    #     if architecture == 'skip':
+    #         y = torgb(x, y, 2)
     with tf.variable_scope('4x4'):
         with tf.variable_scope('Const'):
             x = tf.get_variable('const', shape=[1, nf(1), 4, 4], initializer=tf.initializers.random_normal())
             x = tf.tile(tf.cast(x, dtype), [tf.shape(dlatents_in)[0], 1, 1, 1])
         with tf.variable_scope('Conv'):
-            x = layer(x, layer_idx=0, fmaps=nf(1), kernel=3)
-        if architecture == 'skip':
-            y = torgb(x, y, 2)
+            x = layer(x, layer_idx=0, fmaps=nf(1))
 
     # Main layers.
+    # for res in range(3, resolution_log2 + 1):
+    #     with tf.variable_scope('%dx%d' % (2**res, 2**res)):
+    #         x = block(x, res)
+    #         if architecture == 'skip':
+    #             y = upsample(y)
+    #         if architecture == 'skip' or res == resolution_log2:
+    #             y = torgb(x, y, res)
     for res in range(3, resolution_log2 + 1):
         with tf.variable_scope('%dx%d' % (2**res, 2**res)):
             x = block(x, res)
-            if architecture == 'skip':
-                y = upsample(y)
-            if architecture == 'skip' or res == resolution_log2:
+            if res == resolution_log2:
                 y = torgb(x, y, res)
     images_out = y
 
