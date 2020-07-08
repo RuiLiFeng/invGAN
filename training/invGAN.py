@@ -503,7 +503,7 @@ def G_quotient(
 
     # Early layers.
     with tf.variable_scope('4x4'):
-        x = tf.reshape(latents_in, [-1, latents_size // 16, 4, 4])
+        x = tf.reshape(latents_in, [-1, 4, 4, latents_size // 16])
         with tf.variable_scope('Conv'):
             x = layer(x, layer_idx=0)
 
@@ -528,7 +528,7 @@ def G_quotient(
             if res == resolution_log2:
                 y = torgb(res, x)
 
-    images_out = y
+    images_out = tf.transpose(y, [0, 3, 1, 2])
 
     assert images_out.dtype == tf.as_dtype(dtype)
     return tf.identity(images_out, name='images_out')
