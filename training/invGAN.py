@@ -264,7 +264,7 @@ def inv_module_conv2d_layer(x, up=False, downscale=False, reverse=False):
         x = downscale_conv2d_layer('downConv', x, 2, reverse)
     else:
         logdet = tf.zeros_like(x)[:, 0, 0, 0]
-        x, _ = invConv2D('invConv', x, logdet, reverse)
+        x, _ = invConv2D('invConv', x, logdet, reverse=reverse)
     return x
 
 
@@ -458,7 +458,7 @@ def G_quotient(
         latents_size,
         resolution           = 64,
         num_channels         = 3,
-        fmap_final           = 16,
+        fmap_final           = 4,
         use_noise            = False,
         randomize_noise      = True,
         nonlinearity         = 'lrelu',
