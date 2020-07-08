@@ -240,26 +240,28 @@ def inv_toRGB(name, x, fin, reverse=False):
         if not reverse:
             assert fin == x.shape[3].value
             logdet = tf.zeros_like(x)[:, 0, 0, 0]
-            x, _ = invConv2D('channel_shuffle', x, logdet, ksize=1, reverse=False)
+            x, _ = invConv2D('channel_shuffle', x, logdet, ksize=3, reverse=False)
             x = x[:, :, :, :-(x.shape[3].value % 3)]
             xs = tf.split(x, x.shape[3].value // 3, axis=3)
             x = tf.math.add_n(xs) / (x.shape[3].value // 3)
-            x, _ = invConv2D('toRGB', x, logdet, ksize=3, reverse=False)
+            x, _ = invConv2D('toRGB', x, logdet, ksize=1, reverse=False)
 
         else:
             logdet = tf.zeros_like(x)[:, 0, 0, 0]
-            x, _ = invConv2D('toRGB', x, logdet, ksize=3, reverse=True)
+            x, _ = invConv2D('toRGB', x, logdet, ksize=1, reverse=True)
             xs = [x for _ in range(fin // 3)] + [x[:, :, :, :fin % 3]]
             x = tf.concat(xs, axis=3)
-            x, _ = invConv2D('channel_shuffle', x, logdet, ksize=1, reverse=True)
+            x, _ = invConv2D('channel_shuffle', x, logdet, ksize=3, reverse=True)
         return x
 
 
 #----------------------------------------------------------------------------
 # Inv Module Conv
-def inv_module_conv2d_layer(x, up=False, reverse=False):
+def inv_module_conv2d_layer(x, up=False, downscale=False, reverse=False):
     if up:
         x = Inv_UpSample('invupdown', x, reverse)
+    elif downscale:
+        x = downscale_conv2d_layer('downConv', x, 2, reverse)
     else:
         logdet = tf.zeros_like(x)[:, 0, 0, 0]
         x, _ = invConv2D('invConv', x, logdet, reverse)
@@ -450,114 +452,90 @@ def G_mapping(
     return tf.identity(x, name='dlatents_out')
 
 #----------------------------------------------------------------------------
-# StyleGAN synthesis network with revised architecture (Figure 2d).
-# Implements progressive growing, but no skip connections or residual nets (Figure 7).
-# Used in configs B-D (Table 1).
-
-def G_synthesis_stylegan_revised(
-    dlatents_in,                        # Input: Disentangled latents (W) [minibatch, num_layers, dlatent_size].
-    dlatent_size        = 512,          # Disentangled latent (W) dimensionality.
-    num_channels        = 3,            # Number of output color channels.
-    resolution          = 1024,         # Output resolution.
-    fmap_base           = 16 << 10,     # Overall multiplier for the number of feature maps.
-    fmap_decay          = 1.0,          # log2 feature map reduction when doubling the resolution.
-    fmap_min            = 1,            # Minimum number of feature maps in any layer.
-    fmap_max            = 512,          # Maximum number of feature maps in any layer.
-    randomize_noise     = True,         # True = randomize noise inputs every time (non-deterministic), False = read noise inputs from variables.
-    nonlinearity        = 'lrelu',      # Activation function: 'relu', 'lrelu', etc.
-    dtype               = 'float32',    # Data type to use for activations and outputs.
-    resample_kernel     = [1,3,3,1],    # Low-pass filter to apply when resampling activations. None = no filtering.
-    fused_modconv       = True,         # Implement modulated_conv2d_layer() as a single fused op?
-    structure           = 'auto',       # 'fixed' = no progressive growing, 'linear' = human-readable, 'recursive' = efficient, 'auto' = select automatically.
-    is_template_graph   = False,        # True = template graph constructed by the Network class, False = actual evaluation.
-    force_clean_graph   = False,        # True = construct a clean graph that looks nice in TensorBoard, False = default behavior.
-    **_kwargs):                         # Ignore unrecognized keyword args.
-
-    resolution_log2 = int(np.log2(resolution))
-    assert resolution == 2**resolution_log2 and resolution >= 4
-    def nf(stage): return np.clip(int(fmap_base / (2.0 ** (stage * fmap_decay))), fmap_min, fmap_max)
-    if is_template_graph: force_clean_graph = True
-    if force_clean_graph: randomize_noise = False
-    if structure == 'auto': structure = 'linear' if force_clean_graph else 'recursive'
+# InvGAN without low rank decomposition
+def G_quotient(
+        latents_in,
+        latents_size,
+        resolution           = 64,
+        num_channels         = 3,
+        fmap_final           = 16,
+        use_noise            = False,
+        randomize_noise      = True,
+        nonlinearity         = 'lrelu',
+        dtype                = 'float32',
+        **_kwargs):
+    assert latents_size == fmap_final * resolution * resolution and latents_size % 16 == 0
+    assert num_channels == 3
     act = nonlinearity
+    resolution_log2 = int(np.log2(resolution))
+    assert resolution == 2 ** resolution_log2 and resolution >= 4
     num_layers = resolution_log2 * 2 - 2
     images_out = None
 
-    # Primary inputs.
-    dlatents_in.set_shape([None, num_layers, dlatent_size])
-    dlatents_in = tf.cast(dlatents_in, dtype)
-    lod_in = tf.cast(tf.get_variable('lod', initializer=np.float32(0), trainable=False), dtype)
+    # Primary inputs
+    latents_in.set_shape([None, latents_size])
+    latents_in = tf.cast(latents_in, dtype)
+    # lod_in = tf.cast(tf.get_variable('lod', initializer=np.float32(0), trainable=False), dtype)
 
     # Noise inputs.
     noise_inputs = []
     for layer_idx in range(num_layers - 1):
         res = (layer_idx + 5) // 2
-        shape = [1, 1, 2**res, 2**res]
-        noise_inputs.append(tf.get_variable('noise%d' % layer_idx, shape=shape, initializer=tf.initializers.random_normal(), trainable=False))
+        shape = [1, 1, 2 ** res, 2 ** res]
+        noise_inputs.append(
+            tf.get_variable('noise%d' % layer_idx, shape=shape, initializer=tf.initializers.random_normal(),
+                            trainable=False))
 
-    # Single convolution layer with all the bells and whistles.
-    def layer(x, layer_idx, fmaps, kernel, up=False):
-        x = modulated_conv2d_layer(x, dlatents_in[:, layer_idx], fmaps=fmaps, kernel=kernel, up=up, resample_kernel=resample_kernel, fused_modconv=fused_modconv)
-        if randomize_noise:
-            noise = tf.random_normal([tf.shape(x)[0], 1, x.shape[2], x.shape[3]], dtype=x.dtype)
-        else:
-            noise = tf.cast(noise_inputs[layer_idx], x.dtype)
-        noise_strength = tf.get_variable('noise_strength', shape=[], initializer=tf.initializers.zeros())
-        x += noise * tf.cast(noise_strength, x.dtype)
-        return apply_bias_act(x, act=act)
+    # Single Conv layer
+    def layer(x, layer_idx, up=False):
+        # downscale = (layer_idx >= 8)
+        downscale = False
+        x = inv_module_conv2d_layer(x, up, downscale)
+        if use_noise:
+            if randomize_noise:
+                noise = tf.random_normal([tf.shape(x)[0], 1, x.shape[2], x.shape[3]], dtype=x.dtype)
+            else:
+                noise = tf.cast(noise_inputs[layer_idx], x.dtype)
+            noise_strength = tf.get_variable('noise_strength', shape=[], initializer=tf.initializers.zeros())
+            x += noise * tf.cast(noise_strength, x.dtype)
+        x = inv_bias_act(x, act=act)
+        return x
 
     # Early layers.
     with tf.variable_scope('4x4'):
-        with tf.variable_scope('Const'):
-            x = tf.get_variable('const', shape=[1, nf(1), 4, 4], initializer=tf.initializers.random_normal())
-            x = tf.tile(tf.cast(x, dtype), [tf.shape(dlatents_in)[0], 1, 1, 1])
+        x = tf.reshape(latents_in, [-1, latents_size // 16, 4, 4])
         with tf.variable_scope('Conv'):
-            x = layer(x, layer_idx=0, fmaps=nf(1), kernel=3)
+            x = layer(x, layer_idx=0)
 
-    # Building blocks for remaining layers.
-    def block(res, x): # res = 3..resolution_log2
-        with tf.variable_scope('%dx%d' % (2**res, 2**res)):
+    def block(res, x):
+        with tf.variable_scope('%d%d' % (2**res, 2**res)):
             with tf.variable_scope('Conv0_up'):
-                x = layer(x, layer_idx=res*2-5, fmaps=nf(res-1), kernel=3, up=True)
+                x = layer(x, layer_idx=res*2-5, up=True)
             with tf.variable_scope('Conv1'):
-                x = layer(x, layer_idx=res*2-4, fmaps=nf(res-1), kernel=3)
+                x = layer(x, layer_idx=res*2-4, up=False)
             return x
-    def torgb(res, x): # res = 2..resolution_log2
-        with tf.variable_scope('ToRGB_lod%d' % (resolution_log2 - res)):
-            return apply_bias_act(modulated_conv2d_layer(x, dlatents_in[:, res*2-3], fmaps=num_channels, kernel=1, demodulate=False, fused_modconv=fused_modconv))
 
-    # Fixed structure: simple and efficient, but does not support progressive growing.
-    if structure == 'fixed':
-        for res in range(3, resolution_log2 + 1):
+    def torgb(res, x):
+        lod = resolution_log2 - res
+        with tf.variable_scope('ToRGB_lod%d' % lod):
+            x = inv_toRGB('Conv' % lod, x, x.shape[3].value)
+            x = inv_bias_act(x)
+            return x
+
+    for res in range(3, resolution_log2 + 1):
+        with tf.variable_scope('%dx%d'% (2**res, 2**res)):
             x = block(res, x)
-        images_out = torgb(resolution_log2, x)
+            if res == resolution_log2:
+                y = torgb(res, x)
 
-    # Linear structure: simple but inefficient.
-    if structure == 'linear':
-        images_out = torgb(2, x)
-        for res in range(3, resolution_log2 + 1):
-            lod = resolution_log2 - res
-            x = block(res, x)
-            img = torgb(res, x)
-            with tf.variable_scope('Upsample_lod%d' % lod):
-                images_out = upsample_2d(images_out)
-            with tf.variable_scope('Grow_lod%d' % lod):
-                images_out = tflib.lerp_clip(img, images_out, lod_in - lod)
-
-    # Recursive structure: complex but efficient.
-    if structure == 'recursive':
-        def cset(cur_lambda, new_cond, new_lambda):
-            return lambda: tf.cond(new_cond, new_lambda, cur_lambda)
-        def grow(x, res, lod):
-            y = block(res, x)
-            img = lambda: naive_upsample_2d(torgb(res, y), factor=2**lod)
-            img = cset(img, (lod_in > lod), lambda: naive_upsample_2d(tflib.lerp(torgb(res, y), upsample_2d(torgb(res - 1, x)), lod_in - lod), factor=2**lod))
-            if lod > 0: img = cset(img, (lod_in < lod), lambda: grow(y, res + 1, lod - 1))
-            return img()
-        images_out = grow(x, 3, resolution_log2 - 3)
+    images_out = y
 
     assert images_out.dtype == tf.as_dtype(dtype)
     return tf.identity(images_out, name='images_out')
+
+
+
+
 
 #----------------------------------------------------------------------------
 # StyleGAN2 synthesis network (Figure 7).
