@@ -523,7 +523,89 @@ def G_quotient(
             return x
 
     for res in range(3, resolution_log2 + 1):
-        with tf.variable_scope('%dx%d'% (2**res, 2**res)):
+        with tf.variable_scope('%dx%d' % (2**res, 2**res)):
+            x = block(res, x)
+            if res == resolution_log2:
+                y = torgb(res, x)
+
+    images_out = tf.transpose(y, [0, 3, 1, 2])
+
+    assert images_out.dtype == tf.as_dtype(dtype)
+    return tf.identity(images_out, name='images_out')
+
+
+
+def Q_infer(
+        latents_in,
+        latents_size,
+        resolution           = 64,
+        num_channels         = 3,
+        fmap_final           = 4,
+        use_noise            = False,
+        randomize_noise      = True,
+        nonlinearity         = 'lrelu',
+        dtype                = 'float32',
+        **_kwargs):
+    assert latents_size == fmap_final * resolution * resolution and latents_size % 16 == 0
+    assert num_channels == 3
+    act = nonlinearity
+    resolution_log2 = int(np.log2(resolution))
+    assert resolution == 2 ** resolution_log2 and resolution >= 4
+    num_layers = resolution_log2 * 2 - 2
+    images_out = None
+
+    # Primary inputs
+    latents_in.set_shape([None, latents_size])
+    latents_in = tf.cast(latents_in, dtype)
+    # lod_in = tf.cast(tf.get_variable('lod', initializer=np.float32(0), trainable=False), dtype)
+
+    # Noise inputs.
+    noise_inputs = []
+    for layer_idx in range(num_layers - 1):
+        res = (layer_idx + 5) // 2
+        shape = [1, 1, 2 ** res, 2 ** res]
+        noise_inputs.append(
+            tf.get_variable('noise%d' % layer_idx, shape=shape, initializer=tf.initializers.random_normal(),
+                            trainable=False))
+
+    # Single Conv layer
+    def layer(x, layer_idx, up=False):
+        # downscale = (layer_idx >= 8)
+        downscale = False
+        x = inv_module_conv2d_layer(x, up, downscale)
+        if use_noise:
+            if randomize_noise:
+                noise = tf.random_normal([tf.shape(x)[0], 1, x.shape[2], x.shape[3]], dtype=x.dtype)
+            else:
+                noise = tf.cast(noise_inputs[layer_idx], x.dtype)
+            noise_strength = tf.get_variable('noise_strength', shape=[], initializer=tf.initializers.zeros())
+            x += noise * tf.cast(noise_strength, x.dtype)
+        x = inv_bias_act(x, act=act)
+        return x
+
+    # Early layers.
+    with tf.variable_scope('4x4'):
+        x = tf.reshape(latents_in, [-1, 4, 4, latents_size // 16])
+        with tf.variable_scope('Conv'):
+            x = layer(x, layer_idx=0)
+
+    def block(res, x):
+        with tf.variable_scope('%d%d' % (2**res, 2**res)):
+            with tf.variable_scope('Conv0_up'):
+                x = layer(x, layer_idx=res*2-5, up=True)
+            with tf.variable_scope('Conv1'):
+                x = layer(x, layer_idx=res*2-4, up=False)
+            return x
+
+    def torgb(res, x):
+        lod = resolution_log2 - res
+        with tf.variable_scope('ToRGB_lod%d' % lod):
+            x = inv_toRGB('Conv', x, x.shape[3].value)
+            x = inv_bias_act(x)
+            return x
+
+    for res in range(3, resolution_log2 + 1):
+        with tf.variable_scope('%dx%d' % (2**res, 2**res)):
             x = block(res, x)
             if res == resolution_log2:
                 y = torgb(res, x)
