@@ -561,7 +561,7 @@ def Q_infer(
         res = (layer_idx + 5) // 2
         shape = [1, 1, 2 ** res, 2 ** res]
         noise_inputs.append(
-            tf.get_variable('noise%d' % layer_idx, shape=shape, initializer=tf.initializers.random_normal(),
+            tf.get_variable('noise_inf%d' % layer_idx, shape=shape, initializer=tf.initializers.random_normal(),
                             trainable=False))
 
 
