@@ -59,8 +59,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/training/invGAN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="542">
-              <caret line="607" column="33" selection-start-line="607" selection-start-column="23" selection-end-line="607" selection-end-column="33" />
+            <state relative-caret-position="470">
+              <caret line="939" lean-forward="true" selection-start-line="939" selection-end-line="939" />
               <folding>
                 <element signature="e#285#303#0" expanded="true" />
               </folding>
@@ -221,7 +221,7 @@
       <option name="presentableId" value="Default" />
       <updated>1593352294416</updated>
       <workItem from="1593352319590" duration="14134000" />
-      <workItem from="1593691255557" duration="44141000" />
+      <workItem from="1593691255557" duration="44688000" />
     </task>
     <servers />
   </component>
@@ -231,7 +231,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="58275000" />
+    <option name="totallyTimeSpent" value="58822000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -251,8 +251,8 @@
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="10" weight="0.32973894" />
-      <window_info anchor="bottom" id="Terminal" order="11" weight="0.2407809" />
-      <window_info active="true" anchor="bottom" id="Python Console" order="12" visible="true" weight="0.10845987" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.2407809" />
+      <window_info anchor="bottom" id="Python Console" order="12" weight="0.27440348" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -428,8 +428,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/training/invGAN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="542">
-          <caret line="607" column="33" selection-start-line="607" selection-start-column="23" selection-end-line="607" selection-end-column="33" />
+        <state relative-caret-position="470">
+          <caret line="939" lean-forward="true" selection-start-line="939" selection-end-line="939" />
           <folding>
             <element signature="e#285#303#0" expanded="true" />
           </folding>

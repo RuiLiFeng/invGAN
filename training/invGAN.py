@@ -508,7 +508,7 @@ def G_quotient(
             x = layer(x, layer_idx=0)
 
     def block(res, x):
-        with tf.variable_scope('%d%d' % (2**res, 2**res)):
+        with tf.variable_scope('%dx%d' % (2**res, 2**res)):
             with tf.variable_scope('Conv0_up'):
                 x = layer(x, layer_idx=res*2-5, up=True)
             with tf.variable_scope('Conv1'):
@@ -580,7 +580,7 @@ def Q_infer(
         x = inv_module_conv2d_layer(x, up, downscale, reverse=True)
         return x
     def inv_block(res, x):
-        with tf.variable_scope('%d%d' % (2 ** res, 2 ** res)):
+        with tf.variable_scope('%dx%d' % (2 ** res, 2 ** res)):
             with tf.variable_scope('Conv1'):
                 x = inv_layer(x, layer_idx=res * 2 - 4, up=False)
             with tf.variable_scope('Conv0_up'):
@@ -598,6 +598,7 @@ def Q_infer(
         with tf.variable_scope('%dx%d' % (2**res, 2**res)):
             if res == resolution_log2:
                 x = inv_torgb(res, x)
+                print(x)
             x = inv_block(res, x)
 
         # Early layers.
@@ -925,3 +926,17 @@ def D_stylegan2(
     return scores_out
 
 #----------------------------------------------------------------------------
+
+
+"""
+from training.invGAN import *
+f = G_quotient
+q= Q_infer
+z = tf.random.normal([8,4096*4])
+with tf.variable_scope('test',reuse=tf.AUTO_REUSE):
+    x=G_quotient(z,4096*4,fmap_final=4)
+    z1=q(x, 4096*4)
+    x1 = G_quotient(z1,4096*4,fmap_final=4)
+
+
+"""
