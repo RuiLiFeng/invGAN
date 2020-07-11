@@ -288,7 +288,7 @@ def inv_dense_layer(x, fmaps, gain=1, use_wscale=True,
 # Invert bias act
 def inv_bias_act(x, act='linear', alpha=0.2, gain=None, lrmul=1, bias_var='bias', reverse=False):
     assert act in ['linear', 'lrelu']
-    b = tf.get_variable(bias_var, shape=[x.shape[1]], initializer=tf.initializers.zeros()) * lrmul
+    b = tf.get_variable(bias_var, shape=[x.shape[3]], initializer=tf.initializers.zeros()) * lrmul
     if reverse:
         b = -b
         alpha = 1.0 / alpha
@@ -598,7 +598,6 @@ def Q_infer(
         with tf.variable_scope('%dx%d' % (2**res, 2**res)):
             if res == resolution_log2:
                 x = inv_torgb(res, x)
-                print(x)
             x = inv_block(res, x)
 
         # Early layers.
