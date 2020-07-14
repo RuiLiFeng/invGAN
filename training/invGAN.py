@@ -509,28 +509,28 @@ def G_quotient(
         return x
 
     # Early layers.
-    with tf.variable_scope('4x4'):
+    with tf.variable_scope('4x4', reuse=tf.AUTO_REUSE):
         x = tf.reshape(latents_in, [-1, 4, 4, latents_size // 16])
-        with tf.variable_scope('Conv'):
+        with tf.variable_scope('Conv', reuse=tf.AUTO_REUSE):
             x = layer(x, layer_idx=0)
 
     def block(res, x):
-        with tf.variable_scope('%dx%d' % (2**res, 2**res)):
-            with tf.variable_scope('Conv0_up'):
+        with tf.variable_scope('%dx%d' % (2**res, 2**res), reuse=tf.AUTO_REUSE):
+            with tf.variable_scope('Conv0_up', reuse=tf.AUTO_REUSE):
                 x = layer(x, layer_idx=res*2-5, up=True)
-            with tf.variable_scope('Conv1'):
+            with tf.variable_scope('Conv1', reuse=tf.AUTO_REUSE):
                 x = layer(x, layer_idx=res*2-4, up=False)
             return x
 
     def torgb(res, x):
         lod = resolution_log2 - res
-        with tf.variable_scope('ToRGB_lod%d' % lod):
+        with tf.variable_scope('ToRGB_lod%d' % lod, reuse=tf.AUTO_REUSE):
             x = inv_toRGB('Conv', x, x.shape[3].value)
             x = inv_bias_act(x)
             return x
 
     for res in range(3, resolution_log2 + 1):
-        with tf.variable_scope('%dx%d' % (2**res, 2**res)):
+        with tf.variable_scope('%dx%d' % (2**res, 2**res), reuse=tf.AUTO_REUSE):
             x = block(res, x)
             if res == resolution_log2:
                 x = torgb(res, x)
@@ -587,32 +587,29 @@ def Q_infer(
         x = inv_module_conv2d_layer(x, up, downscale, reverse=True)
         return x
     def inv_block(res, x):
-        with tf.variable_scope('%dx%d' % (2 ** res, 2 ** res)):
-            with tf.variable_scope('Conv1'):
+        with tf.variable_scope('%dx%d' % (2 ** res, 2 ** res), reuse=tf.AUTO_REUSE):
+            with tf.variable_scope('Conv1', reuse=tf.AUTO_REUSE):
                 x = inv_layer(x, layer_idx=res * 2 - 4, up=False)
-            with tf.variable_scope('Conv0_up'):
+            with tf.variable_scope('Conv0_up', reuse=tf.AUTO_REUSE):
                 x = inv_layer(x, layer_idx=res * 2 - 5, up=True)
             return x
     def inv_torgb(res, x):
         lod = resolution_log2 - res
-        with tf.variable_scope('ToRGB_lod%d' % lod):
+        with tf.variable_scope('ToRGB_lod%d' % lod, reuse=tf.AUTO_REUSE):
             x = inv_bias_act(x, reverse=True)
             x = inv_toRGB('Conv', x, fmap_final, reverse=True)
             return x
 
-    record = []
-
     x = images_in
     for res in range(resolution_log2, 3 - 1, -1):
-        print(res)
-        with tf.variable_scope('%dx%d' % (2**res, 2**res)):
+        with tf.variable_scope('%dx%d' % (2**res, 2**res), reuse=tf.AUTO_REUSE):
             if res == resolution_log2:
                 x = inv_torgb(res, x)
             x = inv_block(res, x)
 
         # Early layers.
-    with tf.variable_scope('4x4'):
-        with tf.variable_scope('Conv'):
+    with tf.variable_scope('4x4', reuse=tf.AUTO_REUSE):
+        with tf.variable_scope('Conv', reuse=tf.AUTO_REUSE):
             x = inv_layer(x, layer_idx=0)
         latents = tf.reshape(x, [-1, np.prod(x.shape[1:])])
 

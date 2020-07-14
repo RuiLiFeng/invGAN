@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cad875f8-3fc9-4ad1-9010-4817f0f2d259" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/training/invGAN.py" beforeDir="false" afterPath="$PROJECT_DIR$/training/invGAN.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -28,8 +27,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/training/invGAN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="324">
-              <caret line="617" column="46" lean-forward="true" selection-start-line="617" selection-start-column="46" selection-end-line="617" selection-end-column="46" />
+            <state relative-caret-position="-1908">
+              <caret line="512" column="54" lean-forward="true" selection-start-line="512" selection-start-column="54" selection-end-line="512" selection-end-column="54" />
               <folding>
                 <element signature="e#285#303#0" expanded="true" />
                 <element signature="e#24124#24619#0" />
@@ -216,7 +215,7 @@
       <option name="presentableId" value="Default" />
       <updated>1593352294416</updated>
       <workItem from="1593352319590" duration="14134000" />
-      <workItem from="1593691255557" duration="58221000" />
+      <workItem from="1593691255557" duration="58630000" />
     </task>
     <servers />
   </component>
@@ -226,7 +225,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="72355000" />
+    <option name="totallyTimeSpent" value="72764000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -430,8 +429,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/training/invGAN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="617" column="46" lean-forward="true" selection-start-line="617" selection-start-column="46" selection-end-line="617" selection-end-column="46" />
+        <state relative-caret-position="-1908">
+          <caret line="512" column="54" lean-forward="true" selection-start-line="512" selection-start-column="54" selection-end-line="512" selection-end-column="54" />
           <folding>
             <element signature="e#285#303#0" expanded="true" />
             <element signature="e#24124#24619#0" />
