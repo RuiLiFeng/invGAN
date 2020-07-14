@@ -298,7 +298,7 @@ def inv_bias_act(x, act='linear', alpha=0.2, gain=None, lrmul=1, bias_var='bias'
             mask = tf.cast(x < 0, x.dtype) * (1.0/alpha - 1.0) + 1.0
             x = x * mask
         x = fused_bias_act(x, -b)
-        return x
+        return tf.transpose(x, [0, 2, 3, 1])
     return tf.transpose(fused_bias_act(x, b=tf.cast(b, x.dtype), act=act, alpha=alpha, gain=gain), [0, 2, 3, 1])
 
 
