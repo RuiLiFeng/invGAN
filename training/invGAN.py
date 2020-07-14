@@ -288,11 +288,12 @@ def inv_dense_layer(x, fmaps, gain=1, use_wscale=True,
 # Invert bias act
 def inv_bias_act(x, act='linear', alpha=0.2, gain=None, lrmul=1, bias_var='bias', reverse=False):
     assert act in ['linear', 'lrelu']
-    b = tf.get_variable(bias_var, shape=[x.shape[3]], initializer=tf.initializers.zeros()) * lrmul
+    x = tf.transpose(x, [0, 3, 1, 2])
+    b = tf.get_variable(bias_var, shape=[x.shape[1]], initializer=tf.initializers.zeros()) * lrmul
     if reverse:
         b = -b
         alpha = 1.0 / alpha
-    return fused_bias_act(x, b=tf.cast(b, x.dtype), act=act, alpha=alpha, gain=gain)
+    return tf.transpose(fused_bias_act(x, b=tf.cast(b, x.dtype), act=act, alpha=alpha, gain=gain), [0, 2, 3, 1])
 
 
 #----------------------------------------------------------------------------
