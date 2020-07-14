@@ -529,18 +529,16 @@ def G_quotient(
             x = inv_bias_act(x)
             return x
 
-    record = []
     for res in range(3, resolution_log2 + 1):
         with tf.variable_scope('%dx%d' % (2**res, 2**res)):
             x = block(res, x)
             if res == resolution_log2:
                 x = torgb(res, x)
-            record.append(x)
 
     images_out = tf.transpose(x, [0, 3, 1, 2])
 
     assert images_out.dtype == tf.as_dtype(dtype)
-    return tf.identity(images_out, name='images_out'), record
+    return tf.identity(images_out, name='images_out')
 
 
 
@@ -610,16 +608,15 @@ def Q_infer(
             if res == resolution_log2:
                 x = inv_torgb(res, x)
             x = inv_block(res, x)
-            record.append(x)
 
         # Early layers.
     with tf.variable_scope('4x4'):
         with tf.variable_scope('Conv'):
             x = inv_layer(x, layer_idx=0)
-        latents = tf.reshape(x, [-1, latents_size])
+        latents = tf.reshape(x, [-1, np.prod(x.shape[1:])])
 
     assert latents.dtype == tf.as_dtype(dtype)
-    return tf.identity(latents, name='latents_infered'), record
+    return tf.identity(latents, name='latents_infered')
 
 
 
@@ -945,8 +942,8 @@ f = G_quotient
 q= Q_infer
 z = tf.random.normal([8,4096*4])
 with tf.variable_scope('test',reuse=tf.AUTO_REUSE):
-    x=G_quotient(z,4096*4,fmap_final=4)
-    z1=q(x, 4096*4)
+    x =G_quotient(z,4096*4,fmap_final=4)
+    z1 =q(x, 4096*4)
     x1 = G_quotient(z1,4096*4,fmap_final=4)
 
 def err(a,b):return tf.reduce_sum(tf.square(a-b))
