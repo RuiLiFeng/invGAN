@@ -529,16 +529,18 @@ def G_quotient(
             x = inv_bias_act(x)
             return x
 
+    record = []
     for res in range(3, resolution_log2 + 1):
         with tf.variable_scope('%dx%d' % (2**res, 2**res)):
             x = block(res, x)
             if res == resolution_log2:
-                y = torgb(res, x)
+                x = torgb(res, x)
+            record.append(x)
 
-    images_out = tf.transpose(y, [0, 3, 1, 2])
+    images_out = tf.transpose(x, [0, 3, 1, 2])
 
     assert images_out.dtype == tf.as_dtype(dtype)
-    return tf.identity(images_out, name='images_out')
+    return tf.identity(images_out, name='images_out'), record
 
 
 
@@ -600,12 +602,15 @@ def Q_infer(
             x = inv_toRGB('Conv', x, fmap_final, reverse=True)
             return x
 
+    record = []
+
     x = images_in
     for res in range(resolution_log2, 3 - 1, -1):
         with tf.variable_scope('%dx%d' % (2**res, 2**res)):
             if res == resolution_log2:
                 x = inv_torgb(res, x)
             x = inv_block(res, x)
+            record.append(x)
 
         # Early layers.
     with tf.variable_scope('4x4'):
@@ -614,7 +619,7 @@ def Q_infer(
         latents = tf.reshape(x, [-1, latents_size])
 
     assert latents.dtype == tf.as_dtype(dtype)
-    return tf.identity(latents, name='latents_infered')
+    return tf.identity(latents, name='latents_infered'), record
 
 
 
@@ -943,6 +948,14 @@ with tf.variable_scope('test',reuse=tf.AUTO_REUSE):
     x=G_quotient(z,4096*4,fmap_final=4)
     z1=q(x, 4096*4)
     x1 = G_quotient(z1,4096*4,fmap_final=4)
+
+def err(a,b):return tf.reduce_sum(tf.square(a-b))
+
+e = err(x,x1)
+init = tf.global_variables_initializer
+sess = tf.Session()
+sess.run(init())
+sess.run(e)
 
 
 def inv_layer(x, layer_idx, up=False):
