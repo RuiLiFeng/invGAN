@@ -28,13 +28,14 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/training/invGAN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="363">
-              <caret line="610" selection-start-line="610" selection-end-line="610" />
+            <state relative-caret-position="324">
+              <caret line="617" column="46" lean-forward="true" selection-start-line="617" selection-start-column="46" selection-end-line="617" selection-end-column="46" />
               <folding>
                 <element signature="e#285#303#0" expanded="true" />
                 <element signature="e#24124#24619#0" />
                 <element signature="e#24898#25177#0" />
                 <element signature="e#25202#25371#0" />
+                <element signature="e#26757#27010#0" />
                 <element signature="e#26916#27487#0" />
                 <element signature="e#26897#26901#0" />
                 <element signature="e#27628#27959#0" />
@@ -215,7 +216,7 @@
       <option name="presentableId" value="Default" />
       <updated>1593352294416</updated>
       <workItem from="1593352319590" duration="14134000" />
-      <workItem from="1593691255557" duration="57259000" />
+      <workItem from="1593691255557" duration="58221000" />
     </task>
     <servers />
   </component>
@@ -225,10 +226,11 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="71393000" />
+    <option name="totallyTimeSpent" value="72355000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15778251" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -428,13 +430,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/training/invGAN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="363">
-          <caret line="610" selection-start-line="610" selection-end-line="610" />
+        <state relative-caret-position="324">
+          <caret line="617" column="46" lean-forward="true" selection-start-line="617" selection-start-column="46" selection-end-line="617" selection-end-column="46" />
           <folding>
             <element signature="e#285#303#0" expanded="true" />
             <element signature="e#24124#24619#0" />
             <element signature="e#24898#25177#0" />
             <element signature="e#25202#25371#0" />
+            <element signature="e#26757#27010#0" />
             <element signature="e#26916#27487#0" />
             <element signature="e#26897#26901#0" />
             <element signature="e#27628#27959#0" />
