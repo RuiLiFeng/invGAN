@@ -259,9 +259,9 @@ def inv_toRGB(name, x, fin, reverse=False):
 # Inv Module Conv
 def inv_module_conv2d_layer(x, up=False, downscale=False, reverse=False):
     if up:
-        x = Inv_UpSample('invupdown', x, reverse)
+        x = Inv_UpSample('invupdown', x, reverse=reverse)
     elif downscale:
-        x = downscale_conv2d_layer('downConv', x, 2, reverse)
+        x = downscale_conv2d_layer('downConv', x, 2, reverse=reverse)
     else:
         logdet = tf.zeros_like(x)[:, 0, 0, 0]
         x, _ = invConv2D('invConv', x, logdet, reverse=reverse)

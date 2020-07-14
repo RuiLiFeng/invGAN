@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cad875f8-3fc9-4ad1-9010-4817f0f2d259" name="Default Changelist" comment="" />
+    <list default="true" id="cad875f8-3fc9-4ad1-9010-4817f0f2d259" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,8 +27,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/training/invGAN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="466">
-              <caret line="937" column="43" lean-forward="true" selection-start-line="930" selection-end-line="937" selection-end-column="43" />
+            <state relative-caret-position="462">
+              <caret line="599" column="38" lean-forward="true" selection-start-line="599" selection-start-column="38" selection-end-line="599" selection-end-column="38" />
               <folding>
                 <element signature="e#285#303#0" expanded="true" />
                 <element signature="e#26931#27151#0" />
@@ -188,7 +190,7 @@
       <option name="presentableId" value="Default" />
       <updated>1593352294416</updated>
       <workItem from="1593352319590" duration="14134000" />
-      <workItem from="1593691255557" duration="48769000" />
+      <workItem from="1593691255557" duration="49377000" />
     </task>
     <servers />
   </component>
@@ -198,7 +200,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="62903000" />
+    <option name="totallyTimeSpent" value="63511000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -218,7 +220,7 @@
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="10" weight="0.32973894" />
-      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.30802602" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.23210412" />
       <window_info anchor="bottom" id="Python Console" order="12" weight="0.27440348" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -395,8 +397,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/training/invGAN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="466">
-          <caret line="937" column="43" lean-forward="true" selection-start-line="930" selection-end-line="937" selection-end-column="43" />
+        <state relative-caret-position="462">
+          <caret line="599" column="38" lean-forward="true" selection-start-line="599" selection-start-column="38" selection-end-line="599" selection-end-column="38" />
           <folding>
             <element signature="e#285#303#0" expanded="true" />
             <element signature="e#26931#27151#0" />
