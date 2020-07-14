@@ -291,8 +291,14 @@ def inv_bias_act(x, act='linear', alpha=0.2, gain=None, lrmul=1, bias_var='bias'
     x = tf.transpose(x, [0, 3, 1, 2])
     b = tf.get_variable(bias_var, shape=[x.shape[1]], initializer=tf.initializers.zeros()) * lrmul
     if reverse:
-        b = -b
-        alpha = 1.0 / alpha
+        if act == 'lrelu':
+            if gain is None:
+                gain = np.sqrt(2)
+            x = x / gain
+            mask = tf.cast(x < 0, x.dtype) * (1.0/alpha - 1.0) + 1.0
+            x = x * mask
+        x = fused_bias_act(x, -b)
+        return x
     return tf.transpose(fused_bias_act(x, b=tf.cast(b, x.dtype), act=act, alpha=alpha, gain=gain), [0, 2, 3, 1])
 
 
@@ -939,4 +945,63 @@ with tf.variable_scope('test',reuse=tf.AUTO_REUSE):
     x1 = G_quotient(z1,4096*4,fmap_final=4)
 
 
+def inv_layer(x, layer_idx, up=False):
+    # downscale = (layer_idx >= 8)
+    x = inv_bias_act(x, act=act, reverse=True)
+    if use_noise:
+        if randomize_noise:
+            noise = tf.random_normal([tf.shape(x)[0], 1, x.shape[2], x.shape[3]], dtype=x.dtype)
+        else:
+            noise = tf.cast(noise_inputs[layer_idx], x.dtype)
+        noise_strength = tf.get_variable('noise_strength', shape=[], initializer=tf.initializers.zeros())
+        x += noise * tf.cast(noise_strength, x.dtype)
+    downscale = False
+    x = inv_module_conv2d_layer(x, up, downscale, reverse=True)
+    return x
+def inv_block(res, x):
+    with tf.variable_scope('%dx%d' % (2 ** res, 2 ** res)):
+        with tf.variable_scope('Conv1'):
+            x = inv_layer(x, layer_idx=res * 2 - 4, up=False)
+        with tf.variable_scope('Conv0_up'):
+            x = inv_layer(x, layer_idx=res * 2 - 5, up=True)
+        return x
+def inv_torgb(res, x):
+    lod = resolution_log2 - res
+    with tf.variable_scope('ToRGB_lod%d' % lod):
+        x = inv_bias_act(x, reverse=True)
+        x = inv_toRGB('Conv', x, fmap_final, reverse=True)
+        return x
+
+
+
+def layer(x, layer_idx, up=False):
+    # downscale = (layer_idx >= 8)
+    downscale = False
+    x = inv_module_conv2d_layer(x, up, downscale)
+    if use_noise:
+        if randomize_noise:
+            noise = tf.random_normal([tf.shape(x)[0], 1, x.shape[2], x.shape[3]], dtype=x.dtype)
+        else:
+            noise = tf.cast(noise_inputs[layer_idx], x.dtype)
+        noise_strength = tf.get_variable('noise_strength', shape=[], initializer=tf.initializers.zeros())
+        x += noise * tf.cast(noise_strength, x.dtype)
+    x = inv_bias_act(x, act=act)
+    return x
+
+
+def block(res, x):
+    with tf.variable_scope('%dx%d' % (2 ** res, 2 ** res)):
+        with tf.variable_scope('Conv0_up'):
+            x = layer(x, layer_idx=res * 2 - 5, up=True)
+        with tf.variable_scope('Conv1'):
+            x = layer(x, layer_idx=res * 2 - 4, up=False)
+        return x
+
+
+def torgb(res, x):
+    lod = resolution_log2 - res
+    with tf.variable_scope('ToRGB_lod%d' % lod):
+        x = inv_toRGB('Conv', x, x.shape[3].value)
+        x = inv_bias_act(x)
+        return x
 """
