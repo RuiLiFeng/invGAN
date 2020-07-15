@@ -237,33 +237,21 @@ def inv_toRGB(name, x, fin, reverse=False):
     :return:
     """
     with tf.variable_scope(name, reuse=tf.AUTO_REUSE):
-        if fin == 3:
-            if not reverse:
-                assert fin == x.shape[3].value
-                logdet = tf.zeros_like(x)[:, 0, 0, 0]
-                x, _ = invConv2D('channel_shuffle', x, logdet, ksize=3, reverse=False)
-                x, _ = invConv2D('toRGB', x, logdet, ksize=1, reverse=False)
+        if not reverse:
+            assert fin == x.shape[3].value
+            logdet = tf.zeros_like(x)[:, 0, 0, 0]
+            x, _ = invConv2D('channel_shuffle', x, logdet, ksize=3, reverse=False)
+            x = x[:, :, :, :-(x.shape[3].value % 3)]
+            xs = tf.split(x, x.shape[3].value // 3, axis=3)
+            x = tf.math.add_n(xs) / (x.shape[3].value // 3)
+            x, _ = invConv2D('toRGB', x, logdet, ksize=1, reverse=False)
 
-            else:
-                logdet = tf.zeros_like(x)[:, 0, 0, 0]
-                x, _ = invConv2D('toRGB', x, logdet, ksize=1, reverse=True)
-                x, _ = invConv2D('channel_shuffle', x, logdet, ksize=3, reverse=True)
         else:
-            if not reverse:
-                assert fin == x.shape[3].value
-                logdet = tf.zeros_like(x)[:, 0, 0, 0]
-                x, _ = invConv2D('channel_shuffle', x, logdet, ksize=3, reverse=False)
-                x = x[:, :, :, :-(x.shape[3].value % 3)]
-                xs = tf.split(x, x.shape[3].value // 3, axis=3)
-                x = tf.math.add_n(xs) / (x.shape[3].value // 3)
-                x, _ = invConv2D('toRGB', x, logdet, ksize=1, reverse=False)
-
-            else:
-                logdet = tf.zeros_like(x)[:, 0, 0, 0]
-                x, _ = invConv2D('toRGB', x, logdet, ksize=1, reverse=True)
-                xs = [x for _ in range(fin // 3)] + [x[:, :, :, :fin % 3]]
-                x = tf.concat(xs, axis=3)
-                x, _ = invConv2D('channel_shuffle', x, logdet, ksize=3, reverse=True)
+            logdet = tf.zeros_like(x)[:, 0, 0, 0]
+            x, _ = invConv2D('toRGB', x, logdet, ksize=1, reverse=True)
+            xs = [x for _ in range(fin // 3)] + [x[:, :, :, :fin % 3]]
+            x = tf.concat(xs, axis=3)
+            x, _ = invConv2D('channel_shuffle', x, logdet, ksize=3, reverse=True)
         return x
 
 
@@ -623,7 +611,7 @@ def Q_infer(
     with tf.variable_scope('4x4', reuse=tf.AUTO_REUSE):
         with tf.variable_scope('Conv', reuse=tf.AUTO_REUSE):
             x = inv_layer(x, layer_idx=0)
-        latents = tf.reshape(x, [-1, np.prod(x.shape[1:])])
+        latents = tf.reshape(x, [-1, latents_size])
 
     assert latents.dtype == tf.as_dtype(dtype)
     return tf.identity(latents, name='latents_infered')
@@ -828,14 +816,10 @@ q= Q_infer
 z = tf.random.normal([8,4096*4])
 with tf.variable_scope('test',reuse=tf.AUTO_REUSE):
     x =G_quotient(z,4096*4,fmap_final=4)
-    a = tf.global_variables()
     z1 =q(x, 4096*4)
-    b = tf.global_variables()
     x1 = G_quotient(z1,4096*4,fmap_final=4)
-    c = tf.global_variables()
 
-def err(a,b):return tf.reduce_mean(tf.square(a-b))
-
+def err(a,b):return tf.reduce_sum(tf.square(a-b))
 
 e = err(x,x1)
 init = tf.global_variables_initializer
@@ -857,6 +841,7 @@ def inv_layer(x, layer_idx, up=False):
     downscale = False
     x = inv_module_conv2d_layer(x, up, downscale, reverse=True)
     return x
+
 def inv_block(res, x):
     with tf.variable_scope('%dx%d' % (2 ** res, 2 ** res)):
         with tf.variable_scope('Conv1'):
@@ -864,6 +849,7 @@ def inv_block(res, x):
         with tf.variable_scope('Conv0_up'):
             x = inv_layer(x, layer_idx=res * 2 - 5, up=True)
         return x
+
 def inv_torgb(res, x):
     lod = resolution_log2 - res
     with tf.variable_scope('ToRGB_lod%d' % lod):
@@ -903,17 +889,60 @@ def torgb(res, x):
         x = inv_toRGB('Conv', x, x.shape[3].value)
         x = inv_bias_act(x)
         return x
-        
-fmap_final=32
+
+
+def i(x):
+    record = []
+    for res in range(resolution_log2, 3 - 1, -1):
+        with tf.variable_scope('%dx%d' % (2**res, 2**res), reuse=tf.AUTO_REUSE):
+            if res == resolution_log2:
+                x = inv_torgb(res, x)
+                record.append(x)
+            
+            x = inv_block(res, x)
+            record.append(x)
+            
+    return x, record
+
+
+
+def g(x):
+    record = []
+    for res in range(3, resolution_log2 + 1):
+        with tf.variable_scope('%dx%d' % (2**res, 2**res), reuse=tf.AUTO_REUSE):
+            x = block(res, x)
+            record.append(x)
+            
+            if res == resolution_log2:
+                x = torgb(res, x)
+                record.append(x)
+            
+    
+    return x,record
+
+
+def bb(id,x):
+    with tf.variable_scope('s%d'%id,reuse=tf.AUTO_REUSE):
+        x = block(2, x)
+        return x
+
+
+def ib(id,x):
+    with tf.variable_scope('s%d'%id,reuse=tf.AUTO_REUSE):
+        x = inv_block(2, x)
+        return x
+
+
+
+fmap_final=4
 use_noise=False
 act='lrelu'
 resolution_log2=6
-with tf.variable_scope('tt',reuse=tf.AUTO_REUSE):
-    x = tf.random.normal([12,32,32,128])
-    y = block(2,x)
-    z = torgb(2,y)
-    y1 = inv_torgb(2,z)
-    x1 = inv_block(2,y1)
-    y2 = block(2,x1)
-    z1 = torgb(2,y2)
+
+x = tf.random.normal([12,16,16,1024])
+y1 = bb(1,x)
+y2 = bb(2,y1)
+y3 = bb(3,y2)
+y4 = bb(4,y3)
+y5 = torgb(2,x)
 """

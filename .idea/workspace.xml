@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cad875f8-3fc9-4ad1-9010-4817f0f2d259" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/training/invGAN.py" beforeDir="false" afterPath="$PROJECT_DIR$/training/invGAN.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -9,6 +10,31 @@
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DockManager">
+    <window id="2">
+      <content type="file-editors">
+        <state>
+          <leaf>
+            <file pinned="false" current-in-tab="true">
+              <entry file="file://$PROJECT_DIR$/training/invGAN2.py">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="445">
+                    <caret line="917" column="32" lean-forward="true" selection-start-line="917" selection-start-column="32" selection-end-line="917" selection-end-column="32" />
+                    <folding>
+                      <element signature="e#27072#27329#0" />
+                      <element signature="e#27383#27983#0" />
+                      <element signature="e#28019#28382#0" />
+                      <element signature="e#28108#28382#0" />
+                    </folding>
+                  </state>
+                </provider>
+              </entry>
+            </file>
+          </leaf>
+        </state>
+      </content>
+    </window>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
@@ -27,18 +53,17 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/training/invGAN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1908">
-              <caret line="512" column="54" lean-forward="true" selection-start-line="512" selection-start-column="54" selection-end-line="512" selection-end-column="54" />
+            <state relative-caret-position="1052">
+              <caret line="831" column="8" selection-start-line="831" selection-start-column="8" selection-end-line="831" selection-end-column="8" />
               <folding>
                 <element signature="e#285#303#0" expanded="true" />
+                <element signature="e#23635#23851#0" />
                 <element signature="e#24124#24619#0" />
+                <element signature="e#24097#24469#0" />
                 <element signature="e#24898#25177#0" />
                 <element signature="e#25202#25371#0" />
                 <element signature="e#26757#27010#0" />
-                <element signature="e#26916#27487#0" />
-                <element signature="e#26897#26901#0" />
-                <element signature="e#27628#27959#0" />
-                <element signature="e#26931#27151#0" />
+                <element signature="e#27032#27404#0" />
               </folding>
             </state>
           </provider>
@@ -102,27 +127,16 @@
         <option value="$PROJECT_DIR$/training/iconv2d/emerge_conv2d.py" />
         <option value="$PROJECT_DIR$/training/iconv2d/fourier.py" />
         <option value="$PROJECT_DIR$/training/iconv2d/conv2d_bijectors.py" />
+        <option value="$PROJECT_DIR$/training/invGAN2.py" />
         <option value="$PROJECT_DIR$/training/invGAN.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectConfigurationFiles">
-    <option name="files">
-      <list>
-        <option value="$PROJECT_DIR$/.idea/invGAN.iml" />
-        <option value="$PROJECT_DIR$/.idea/misc.xml" />
-        <option value="$PROJECT_DIR$/.idea/vcs.xml" />
-        <option value="$PROJECT_DIR$/.idea/modules.xml" />
-        <option value="$PROJECT_DIR$/.idea/deployment.xml" />
-        <option value="$PROJECT_DIR$/.idea/libraries/R_User_Library.xml" />
-      </list>
-    </option>
-  </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
-    <option name="width" value="1936" />
-    <option name="height" value="1056" />
+    <option name="x" value="1912" />
+    <option name="y" value="-454" />
+    <option name="width" value="1096" />
+    <option name="height" value="1896" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -157,15 +171,15 @@
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/training/iconv2d" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/training" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="E:\program\invert\invGAN\training\iconv2d" />
       <recent name="E:\program\invert\invGAN\training" />
+      <recent name="E:\program\invert\invGAN\training\iconv2d" />
       <recent name="E:\program\invGAN\training" />
     </key>
   </component>
@@ -215,7 +229,7 @@
       <option name="presentableId" value="Default" />
       <updated>1593352294416</updated>
       <workItem from="1593352319590" duration="14134000" />
-      <workItem from="1593691255557" duration="58630000" />
+      <workItem from="1593691255557" duration="69329000" />
     </task>
     <servers />
   </component>
@@ -225,13 +239,12 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="72764000" />
+    <option name="totallyTimeSpent" value="83463000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
+    <frame x="1912" y="-454" width="1096" height="1896" extended-state="6" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15778251" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.2857143" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -245,7 +258,7 @@
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="10" weight="0.32973894" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.23210412" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.1214529" />
       <window_info anchor="bottom" id="Python Console" order="12" weight="0.2559653" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -427,20 +440,32 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/training/invGAN2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="445">
+          <caret line="917" column="32" lean-forward="true" selection-start-line="917" selection-start-column="32" selection-end-line="917" selection-end-column="32" />
+          <folding>
+            <element signature="e#27072#27329#0" />
+            <element signature="e#27383#27983#0" />
+            <element signature="e#28019#28382#0" />
+            <element signature="e#28108#28382#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/training/invGAN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1908">
-          <caret line="512" column="54" lean-forward="true" selection-start-line="512" selection-start-column="54" selection-end-line="512" selection-end-column="54" />
+        <state relative-caret-position="1052">
+          <caret line="831" column="8" selection-start-line="831" selection-start-column="8" selection-end-line="831" selection-end-column="8" />
           <folding>
             <element signature="e#285#303#0" expanded="true" />
+            <element signature="e#23635#23851#0" />
             <element signature="e#24124#24619#0" />
+            <element signature="e#24097#24469#0" />
             <element signature="e#24898#25177#0" />
             <element signature="e#25202#25371#0" />
             <element signature="e#26757#27010#0" />
-            <element signature="e#26916#27487#0" />
-            <element signature="e#26897#26901#0" />
-            <element signature="e#27628#27959#0" />
-            <element signature="e#26931#27151#0" />
+            <element signature="e#27032#27404#0" />
           </folding>
         </state>
       </provider>
