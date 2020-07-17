@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cad875f8-3fc9-4ad1-9010-4817f0f2d259" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/invMain.py" beforeDir="false" afterPath="$PROJECT_DIR$/invMain.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/training/invGAN.py" beforeDir="false" afterPath="$PROJECT_DIR$/training/invGAN.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -38,11 +37,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/training/invGAN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="199">
-              <caret line="479" column="37" selection-start-line="479" selection-start-column="37" selection-end-line="479" selection-end-column="37" />
+            <state relative-caret-position="1836">
+              <caret line="500" column="39" lean-forward="true" selection-start-line="500" selection-start-column="39" selection-end-line="500" selection-end-column="39" />
+              <folding>
+                <element signature="e#285#303#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/training/networks_stylegan2.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="432">
+              <caret line="430" column="32" lean-forward="true" selection-start-line="417" selection-start-column="4" selection-end-line="430" selection-end-column="32" />
               <folding>
                 <element signature="e#285#303#0" expanded="true" />
               </folding>
@@ -59,7 +70,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/invMain.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="324">
@@ -149,8 +160,8 @@
         <option value="$PROJECT_DIR$/training/invGAN2.py" />
         <option value="$PROJECT_DIR$/metrics/frechet_inception_distance.py" />
         <option value="$PROJECT_DIR$/metrics/perceptual_path_length.py" />
-        <option value="$PROJECT_DIR$/training/invGAN.py" />
         <option value="$PROJECT_DIR$/invMain.py" />
+        <option value="$PROJECT_DIR$/training/invGAN.py" />
       </list>
     </option>
   </component>
@@ -258,7 +269,7 @@
       <updated>1593352294416</updated>
       <workItem from="1593352319590" duration="14134000" />
       <workItem from="1593691255557" duration="72558000" />
-      <workItem from="1594814505683" duration="6056000" />
+      <workItem from="1594814505683" duration="6462000" />
     </task>
     <servers />
   </component>
@@ -268,7 +279,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="92748000" />
+    <option name="totallyTimeSpent" value="93154000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -361,16 +372,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/training/networks_stylegan2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-6251">
-          <caret line="482" column="16" lean-forward="true" selection-start-line="482" selection-start-column="16" selection-end-line="482" selection-end-column="16" />
-          <folding>
-            <element signature="e#285#303#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Anaconda3/envs/tf_base/Lib/site-packages/tensorflow/python/ops/gen_nn_ops.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="432">
@@ -446,22 +447,32 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/training/invGAN.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="199">
-          <caret line="479" column="37" selection-start-line="479" selection-start-column="37" selection-end-line="479" selection-end-column="37" />
-          <folding>
-            <element signature="e#285#303#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/invMain.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="324">
           <caret line="57" column="16" lean-forward="true" selection-start-line="57" selection-end-line="58" />
           <folding>
             <element signature="e#227#242#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/training/networks_stylegan2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="430" column="32" lean-forward="true" selection-start-line="417" selection-start-column="4" selection-end-line="430" selection-end-column="32" />
+          <folding>
+            <element signature="e#285#303#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/training/invGAN.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1836">
+          <caret line="500" column="39" lean-forward="true" selection-start-line="500" selection-start-column="39" selection-end-line="500" selection-end-column="39" />
+          <folding>
+            <element signature="e#285#303#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -494,7 +494,6 @@ def G_quotient(
     use_noise           = False,
     **_kwargs):
     latents_size = dlatent_size
-    print(latents_size)
     assert latents_size == fmap_final * resolution * resolution and latents_size % 16 == 0, "latents_size %d," \
                                                                                             "fmap_final %d, " \
                                                                                             "resolution %d," \
