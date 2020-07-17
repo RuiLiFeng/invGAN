@@ -358,7 +358,7 @@ def G_main(
     num_layers = components.synthesis.input_shape[1]
     dlatent_size = components.synthesis.input_shape[2]
     if 'mapping' not in components:
-        components.mapping = tflib.Network('G_mapping', func_name=globals()[mapping_func], dlatent_broadcast=num_layers, **kwargs)
+        components.mapping = tflib.Network('G_mapping', func_name=globals()[mapping_func], **kwargs)
 
     # Setup variables.
     lod_in = tf.get_variable('lod', initializer=np.float32(0), trainable=False)
