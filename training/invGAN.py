@@ -368,38 +368,38 @@ def G_main(
     dlatents = components.mapping.get_output_for(latents_in, labels_in, is_training=is_training, **kwargs)
     dlatents = tf.cast(dlatents, tf.float32)
 
-    # Update moving average of W.
-    if dlatent_avg_beta is not None:
-        with tf.variable_scope('DlatentAvg'):
-            batch_avg = tf.reduce_mean(dlatents, axis=0)
-            update_op = tf.assign(dlatent_avg, tflib.lerp(batch_avg, dlatent_avg, dlatent_avg_beta))
-            with tf.control_dependencies([update_op]):
-                dlatents = tf.identity(dlatents)
-
-    # Perform style mixing regularization.
-    if style_mixing_prob is not None:
-        with tf.variable_scope('StyleMix'):
-            latents2 = tf.random_normal(tf.shape(latents_in))
-            dlatents2 = components.mapping.get_output_for(latents2, labels_in, is_training=is_training, **kwargs)
-            dlatents2 = tf.cast(dlatents2, tf.float32)
-            layer_idx = np.arange(num_layers)[np.newaxis, :, np.newaxis]
-            cur_layers = num_layers - tf.cast(lod_in, tf.int32) * 2
-            mixing_cutoff = tf.cond(
-                tf.random_uniform([], 0.0, 1.0) < style_mixing_prob,
-                lambda: tf.random_uniform([], 1, cur_layers, dtype=tf.int32),
-                lambda: cur_layers)
-            dlatents = tf.where(tf.broadcast_to(layer_idx < mixing_cutoff, tf.shape(dlatents)), dlatents, dlatents2)
-
-    # Apply truncation trick.
-    if truncation_psi is not None:
-        with tf.variable_scope('Truncation'):
-            layer_idx = np.arange(num_layers)[np.newaxis, :, np.newaxis]
-            layer_psi = np.ones(layer_idx.shape, dtype=np.float32)
-            if truncation_cutoff is None:
-                layer_psi *= truncation_psi
-            else:
-                layer_psi = tf.where(layer_idx < truncation_cutoff, layer_psi * truncation_psi, layer_psi)
-            dlatents = tflib.lerp(dlatent_avg, dlatents, layer_psi)
+    # # Update moving average of W.
+    # if dlatent_avg_beta is not None:
+    #     with tf.variable_scope('DlatentAvg'):
+    #         batch_avg = tf.reduce_mean(dlatents, axis=0)
+    #         update_op = tf.assign(dlatent_avg, tflib.lerp(batch_avg, dlatent_avg, dlatent_avg_beta))
+    #         with tf.control_dependencies([update_op]):
+    #             dlatents = tf.identity(dlatents)
+    #
+    # # Perform style mixing regularization.
+    # if style_mixing_prob is not None:
+    #     with tf.variable_scope('StyleMix'):
+    #         latents2 = tf.random_normal(tf.shape(latents_in))
+    #         dlatents2 = components.mapping.get_output_for(latents2, labels_in, is_training=is_training, **kwargs)
+    #         dlatents2 = tf.cast(dlatents2, tf.float32)
+    #         layer_idx = np.arange(num_layers)[np.newaxis, :, np.newaxis]
+    #         cur_layers = num_layers - tf.cast(lod_in, tf.int32) * 2
+    #         mixing_cutoff = tf.cond(
+    #             tf.random_uniform([], 0.0, 1.0) < style_mixing_prob,
+    #             lambda: tf.random_uniform([], 1, cur_layers, dtype=tf.int32),
+    #             lambda: cur_layers)
+    #         dlatents = tf.where(tf.broadcast_to(layer_idx < mixing_cutoff, tf.shape(dlatents)), dlatents, dlatents2)
+    #
+    # # Apply truncation trick.
+    # if truncation_psi is not None:
+    #     with tf.variable_scope('Truncation'):
+    #         layer_idx = np.arange(num_layers)[np.newaxis, :, np.newaxis]
+    #         layer_psi = np.ones(layer_idx.shape, dtype=np.float32)
+    #         if truncation_cutoff is None:
+    #             layer_psi *= truncation_psi
+    #         else:
+    #             layer_psi = tf.where(layer_idx < truncation_cutoff, layer_psi * truncation_psi, layer_psi)
+    #         dlatents = tflib.lerp(dlatent_avg, dlatents, layer_psi)
 
     # Evaluate synthesis network.
     deps = []
