@@ -492,6 +492,7 @@ def G_quotient(
     fused_modconv       = True,
     latents_size        = 4096*3,
     fmap_final          = 4,
+    use_noise           = False,
     **_kwargs):
     print(latents_size)
     assert latents_size == fmap_final * resolution * resolution and latents_size % 16 == 0, "latents_size %d," \

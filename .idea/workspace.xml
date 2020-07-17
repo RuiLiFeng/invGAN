@@ -130,6 +130,7 @@
       <find>Z.</find>
       <find>act</find>
       <find>logdet</find>
+      <find>latents_size</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
