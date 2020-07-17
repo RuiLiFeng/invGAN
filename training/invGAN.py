@@ -406,7 +406,11 @@ def G_main(
     if 'lod' in components.synthesis.vars:
         deps.append(tf.assign(components.synthesis.vars['lod'], lod_in))
     with tf.control_dependencies(deps):
-        images_out = components.synthesis.get_output_for(dlatents, is_training=is_training, force_clean_graph=is_template_graph, **kwargs)
+        images_out = \
+            components.synthesis.get_output_for(dlatents,
+                                                latent_size=dlatent_size,
+                                                is_training=is_training,
+                                                force_clean_graph=is_template_graph, **kwargs)
 
     # Return requested outputs.
     images_out = tf.identity(images_out, name='images_out')
@@ -486,7 +490,7 @@ def G_quotient(
     assert latents_size == fmap_final * resolution * resolution and latents_size % 16 == 0, "latents_size %d," \
                                                                                             "fmap_final %d, " \
                                                                                             "resolution %d," \
-                                                                                            % (latents_size.value,
+                                                                                            % (latents_size,
                                                                                                fmap_final,
                                                                                                resolution)
     assert num_channels == 3
