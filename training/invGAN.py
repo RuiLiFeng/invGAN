@@ -367,6 +367,7 @@ def G_main(
     # Evaluate mapping network.
     dlatents = components.mapping.get_output_for(latents_in, labels_in, is_training=is_training, **kwargs)
     dlatents = tf.cast(dlatents, tf.float32)
+    print(dlatents)
 
     # Update moving average of W.
     if dlatent_avg_beta is not None:
