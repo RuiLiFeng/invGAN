@@ -476,16 +476,23 @@ def G_mapping(
 #----------------------------------------------------------------------------
 # InvGAN without low rank decomposition
 def G_quotient(
-        latents_in,
-        latents_size         = 4096*3,
-        resolution           = 64,
-        num_channels         = 3,
-        fmap_final           = 4,
-        use_noise            = False,
-        randomize_noise      = True,
-        nonlinearity         = 'lrelu',
-        dtype                = 'float32',
-        **_kwargs):
+    dlatents_in,                        # Input: Disentangled latents (W) [minibatch, num_layers, dlatent_size].
+    dlatent_size        = 512,          # Disentangled latent (W) dimensionality.
+    num_channels        = 3,            # Number of output color channels.
+    resolution          = 1024,         # Output resolution.
+    fmap_base           = 16 << 10,     # Overall multiplier for the number of feature maps.
+    fmap_decay          = 1.0,          # log2 feature map reduction when doubling the resolution.
+    fmap_min            = 1,            # Minimum number of feature maps in any layer.
+    fmap_max            = 512,          # Maximum number of feature maps in any layer.
+    randomize_noise     = True,         # True = randomize noise inputs every time (non-deterministic), False = read noise inputs from variables.
+    architecture        = 'skip',       # Architecture: 'orig', 'skip', 'resnet'.
+    nonlinearity        = 'lrelu',      # Activation function: 'relu', 'lrelu', etc.
+    dtype               = 'float32',    # Data type to use for activations and outputs.
+    resample_kernel     = [1,3,3,1],    # Low-pass filter to apply when resampling activations. None = no filtering.
+    fused_modconv       = True,
+    latents_size        = 4096*3,
+    fmap_final          = 4,
+    **_kwargs):
     print(latents_size)
     assert latents_size == fmap_final * resolution * resolution and latents_size % 16 == 0, "latents_size %d," \
                                                                                             "fmap_final %d, " \
@@ -499,6 +506,7 @@ def G_quotient(
     assert resolution == 2 ** resolution_log2 and resolution >= 4
     num_layers = resolution_log2 * 2 - 2
     images_out = None
+    latents_in = dlatents_in
 
     # Primary inputs
     latents_in.set_shape([None, latents_size])

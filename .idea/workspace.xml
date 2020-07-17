@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cad875f8-3fc9-4ad1-9010-4817f0f2d259" name="Default Changelist" comment="" />
+    <list default="true" id="cad875f8-3fc9-4ad1-9010-4817f0f2d259" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/invMain.py" beforeDir="false" afterPath="$PROJECT_DIR$/invMain.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/training/invGAN.py" beforeDir="false" afterPath="$PROJECT_DIR$/training/invGAN.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,11 +38,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/training/invGAN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2705">
-              <caret line="480" column="21" lean-forward="true" selection-start-line="480" selection-start-column="21" selection-end-line="480" selection-end-column="21" />
+            <state relative-caret-position="199">
+              <caret line="479" column="37" selection-start-line="479" selection-start-column="37" selection-end-line="479" selection-end-column="37" />
               <folding>
                 <element signature="e#285#303#0" expanded="true" />
               </folding>
@@ -48,10 +51,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dnnlib/tflib/network.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="218">
+              <caret line="198" column="8" selection-start-line="198" selection-start-column="8" selection-end-line="198" selection-end-column="8" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/invMain.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="468">
-              <caret line="64" column="49" lean-forward="true" selection-start-line="64" selection-start-column="49" selection-end-line="64" selection-end-column="49" />
+            <state relative-caret-position="324">
+              <caret line="57" column="16" lean-forward="true" selection-start-line="57" selection-end-line="58" />
               <folding>
                 <element signature="e#227#242#0" expanded="true" />
               </folding>
@@ -136,8 +148,8 @@
         <option value="$PROJECT_DIR$/training/invGAN2.py" />
         <option value="$PROJECT_DIR$/metrics/frechet_inception_distance.py" />
         <option value="$PROJECT_DIR$/metrics/perceptual_path_length.py" />
-        <option value="$PROJECT_DIR$/invMain.py" />
         <option value="$PROJECT_DIR$/training/invGAN.py" />
+        <option value="$PROJECT_DIR$/invMain.py" />
       </list>
     </option>
   </component>
@@ -245,7 +257,7 @@
       <updated>1593352294416</updated>
       <workItem from="1593352319590" duration="14134000" />
       <workItem from="1593691255557" duration="72558000" />
-      <workItem from="1594814505683" duration="5650000" />
+      <workItem from="1594814505683" duration="6056000" />
     </task>
     <servers />
   </component>
@@ -255,7 +267,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="92342000" />
+    <option name="totallyTimeSpent" value="92748000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -426,22 +438,29 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/invMain.py">
+    <entry file="file://$PROJECT_DIR$/dnnlib/tflib/network.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="64" column="49" lean-forward="true" selection-start-line="64" selection-start-column="49" selection-end-line="64" selection-end-column="49" />
-          <folding>
-            <element signature="e#227#242#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="218">
+          <caret line="198" column="8" selection-start-line="198" selection-start-column="8" selection-end-line="198" selection-end-column="8" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/training/invGAN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2705">
-          <caret line="480" column="21" lean-forward="true" selection-start-line="480" selection-start-column="21" selection-end-line="480" selection-end-column="21" />
+        <state relative-caret-position="199">
+          <caret line="479" column="37" selection-start-line="479" selection-start-column="37" selection-end-line="479" selection-end-column="37" />
           <folding>
             <element signature="e#285#303#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/invMain.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="57" column="16" lean-forward="true" selection-start-line="57" selection-end-line="58" />
+          <folding>
+            <element signature="e#227#242#0" expanded="true" />
           </folding>
         </state>
       </provider>
