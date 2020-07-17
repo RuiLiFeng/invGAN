@@ -486,7 +486,7 @@ def G_quotient(
     assert latents_size == fmap_final * resolution * resolution and latents_size % 16 == 0, "latents_size %d," \
                                                                                             "fmap_final %d, " \
                                                                                             "resolution %d," \
-                                                                                            % (latents_size,
+                                                                                            % (latents_size.value,
                                                                                                fmap_final,
                                                                                                resolution)
     assert num_channels == 3
