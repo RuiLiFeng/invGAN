@@ -367,12 +367,11 @@ def G_main(
     # Evaluate mapping network.
     dlatents = components.mapping.get_output_for(latents_in, labels_in, is_training=is_training, **kwargs)
     dlatents = tf.cast(dlatents, tf.float32)
-    print(dlatents)
 
     # Update moving average of W.
     if dlatent_avg_beta is not None:
         with tf.variable_scope('DlatentAvg'):
-            batch_avg = tf.reduce_mean(dlatents[:, 0], axis=0)
+            batch_avg = tf.reduce_mean(dlatents, axis=0)
             update_op = tf.assign(dlatent_avg, tflib.lerp(batch_avg, dlatent_avg, dlatent_avg_beta))
             with tf.control_dependencies([update_op]):
                 dlatents = tf.identity(dlatents)
