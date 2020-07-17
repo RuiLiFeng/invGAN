@@ -490,10 +490,10 @@ def G_quotient(
     dtype               = 'float32',    # Data type to use for activations and outputs.
     resample_kernel     = [1,3,3,1],    # Low-pass filter to apply when resampling activations. None = no filtering.
     fused_modconv       = True,
-    latents_size        = 4096*3,
     fmap_final          = 4,
     use_noise           = False,
     **_kwargs):
+    latents_size = dlatent_size
     print(latents_size)
     assert latents_size == fmap_final * resolution * resolution and latents_size % 16 == 0, "latents_size %d," \
                                                                                             "fmap_final %d, " \
