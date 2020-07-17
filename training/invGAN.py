@@ -355,8 +355,8 @@ def G_main(
     # Setup components.
     if 'synthesis' not in components:
         components.synthesis = tflib.Network('G_synthesis', func_name=globals()[synthesis_func], **kwargs)
-    num_layers = components.synthesis.input_shape[1]
-    dlatent_size = components.synthesis.input_shape[2]
+    num_layers = 10
+    dlatent_size = components.synthesis.input_shape[1]
     if 'mapping' not in components:
         components.mapping = tflib.Network('G_mapping', func_name=globals()[mapping_func], **kwargs)
 
