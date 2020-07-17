@@ -408,7 +408,7 @@ def G_main(
     with tf.control_dependencies(deps):
         images_out = \
             components.synthesis.get_output_for(dlatents,
-                                                latent_size=dlatent_size,
+                                                latents_size=dlatent_size,
                                                 is_training=is_training,
                                                 force_clean_graph=is_template_graph, **kwargs)
 
@@ -492,7 +492,7 @@ def G_quotient(
                                                                                             "resolution %d," \
                                                                                             % (latents_size,
                                                                                                fmap_final,
-                                                                                               resolution.value)
+                                                                                               resolution)
     assert num_channels == 3
     act = nonlinearity
     resolution_log2 = int(np.log2(resolution))
