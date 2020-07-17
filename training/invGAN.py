@@ -521,28 +521,28 @@ def G_quotient(
         return x
 
     # Early layers.
-    with tf.variable_scope('4x4', reuse=tf.AUTO_REUSE):
+    with tf.variable_scope('4x4'):
         x = tf.reshape(latents_in, [-1, 4, 4, latents_size // 16])
-        with tf.variable_scope('Conv', reuse=tf.AUTO_REUSE):
+        with tf.variable_scope('Conv'):
             x = layer(x, layer_idx=0)
 
     def block(res, x):
-        with tf.variable_scope('%dx%d' % (2**res, 2**res), reuse=tf.AUTO_REUSE):
-            with tf.variable_scope('Conv0_up', reuse=tf.AUTO_REUSE):
+        with tf.variable_scope('%dx%d' % (2**res, 2**res)):
+            with tf.variable_scope('Conv0_up'):
                 x = layer(x, layer_idx=res*2-5, up=True)
-            with tf.variable_scope('Conv1', reuse=tf.AUTO_REUSE):
+            with tf.variable_scope('Conv1'):
                 x = layer(x, layer_idx=res*2-4, up=False)
             return x
 
     def torgb(res, x):
         lod = resolution_log2 - res
-        with tf.variable_scope('ToRGB_lod%d' % lod, reuse=tf.AUTO_REUSE):
+        with tf.variable_scope('ToRGB_lod%d' % lod):
             x = inv_toRGB('Conv', x, x.shape[3].value)
             x = inv_bias_act(x)
             return x
 
     for res in range(3, resolution_log2 + 1):
-        with tf.variable_scope('%dx%d' % (2**res, 2**res), reuse=tf.AUTO_REUSE):
+        with tf.variable_scope('%dx%d' % (2**res, 2**res)):
             x = block(res, x)
             if res == resolution_log2:
                 x = torgb(res, x)
@@ -825,16 +825,14 @@ def D_stylegan2(
 from training.invGAN import *
 f = G_quotient
 q= Q_infer
-z = tf.random.normal([8,4096*4])
+d = 3
+z = tf.random.normal([8,4096*d])
 with tf.variable_scope('test',reuse=tf.AUTO_REUSE):
-    x =G_quotient(z,4096*4,fmap_final=4)
-    a = tf.global_variables()
-    z1 =q(x, 4096*4)
-    b = tf.global_variables()
-    x1 = G_quotient(z1,4096*4,fmap_final=4)
-    c = tf.global_variables()
+    x =G_quotient(z,4096*d,fmap_final=d)
+    z1 =q(x, 4096*d, fmap_final=d)
+    x1 = G_quotient(z1,4096*d,fmap_final=d)
 
-def err(a,b):return tf.reduce_mean(tf.square(a-b))
+def err(a,b):return tf.reduce_sum(tf.square(a-b))
 
 
 e = err(x,x1)
