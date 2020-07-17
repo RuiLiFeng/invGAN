@@ -477,7 +477,7 @@ def G_mapping(
 # InvGAN without low rank decomposition
 def G_quotient(
         latents_in,
-        latents_size,
+        latents_size         = 4096*3,
         resolution           = 64,
         num_channels         = 3,
         fmap_final           = 4,
