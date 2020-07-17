@@ -57,6 +57,7 @@ def run(dataset, data_dir, result_dir, config_id, num_gpus, total_kimg, gamma, m
     G.synthesis_func = 'G_quotient'
     G.latent_size = 4096 * 3
     G.dlatent_size = 4086 * 3
+    G.fmap_final = 3
     metrics = [metric_defaults[x] for x in metrics]
     desc = 'InvGan'
 
