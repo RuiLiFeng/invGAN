@@ -487,6 +487,7 @@ def G_quotient(
         nonlinearity         = 'lrelu',
         dtype                = 'float32',
         **_kwargs):
+    print(latents_size)
     assert latents_size == fmap_final * resolution * resolution and latents_size % 16 == 0, "latents_size %d," \
                                                                                             "fmap_final %d, " \
                                                                                             "resolution %d," \
