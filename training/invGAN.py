@@ -492,7 +492,7 @@ def G_quotient(
                                                                                             "resolution %d," \
                                                                                             % (latents_size,
                                                                                                fmap_final,
-                                                                                               resolution)
+                                                                                               resolution.value)
     assert num_channels == 3
     act = nonlinearity
     resolution_log2 = int(np.log2(resolution))
