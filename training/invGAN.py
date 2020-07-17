@@ -408,7 +408,6 @@ def G_main(
     with tf.control_dependencies(deps):
         images_out = \
             components.synthesis.get_output_for(dlatents,
-                                                latents_size=dlatent_size,
                                                 is_training=is_training,
                                                 force_clean_graph=is_template_graph, **kwargs)
 
