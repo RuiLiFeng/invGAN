@@ -1,47 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cad875f8-3fc9-4ad1-9010-4817f0f2d259" name="Default Changelist" comment="" />
+    <list default="true" id="cad875f8-3fc9-4ad1-9010-4817f0f2d259" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="DockManager">
-    <window id="2">
-      <content type="file-editors">
-        <state>
-          <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-            <file pinned="false" current-in-tab="true">
-              <entry file="file://$PROJECT_DIR$/training/invGAN2.py">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="734">
-                    <caret line="925" column="23" lean-forward="true" selection-start-line="925" selection-start-column="23" selection-end-line="925" selection-end-column="23" />
-                    <folding>
-                      <element signature="e#27072#27329#0" />
-                      <element signature="e#27383#27983#0" />
-                      <element signature="e#28019#28382#0" />
-                      <element signature="e#28108#28382#0" />
-                    </folding>
-                  </state>
-                </provider>
-              </entry>
-            </file>
-          </leaf>
-        </state>
-      </content>
-    </window>
-  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/training/invGAN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="588">
-              <caret line="419" column="49" lean-forward="true" selection-start-line="419" selection-start-column="49" selection-end-line="419" selection-end-column="49" />
+            <state relative-caret-position="-17">
+              <caret line="419" column="49" selection-start-line="419" selection-start-column="49" selection-end-line="419" selection-end-column="49" />
               <folding>
                 <element signature="e#285#303#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/training/iconv2d/conv2d_bijectors.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="229">
+              <caret line="79" column="49" selection-start-line="79" selection-start-column="49" selection-end-line="79" selection-end-column="49" />
+              <folding>
+                <element signature="e#0#23#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -51,7 +40,7 @@
         <entry file="file://$PROJECT_DIR$/training/networks_stylegan2.py">
           <provider selected="true" editor-type-id="text-editor">
             <state>
-              <caret line="418" column="44" lean-forward="true" selection-start-line="418" selection-start-column="44" selection-end-line="418" selection-end-column="44" />
+              <caret line="418" column="44" selection-start-line="418" selection-start-column="44" selection-end-line="418" selection-end-column="44" />
               <folding>
                 <element signature="e#285#303#0" expanded="true" />
               </folding>
@@ -62,8 +51,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/training/training_loop.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-4680">
-              <caret line="19" column="61" selection-start-line="19" selection-start-column="61" selection-end-line="19" selection-end-column="61" />
+            <state relative-caret-position="-17">
+              <caret line="43" column="77" selection-start-line="43" selection-start-column="77" selection-end-line="43" selection-end-column="77" />
             </state>
           </provider>
         </entry>
@@ -71,7 +60,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dnnlib/tflib/network.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
+            <state>
               <caret line="175" column="13" selection-start-line="175" selection-start-column="13" selection-end-line="175" selection-end-column="13" />
             </state>
           </provider>
@@ -80,8 +69,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/invMain.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="396">
-              <caret line="59" column="19" lean-forward="true" selection-start-line="59" selection-start-column="19" selection-end-line="59" selection-end-column="19" />
+            <state>
+              <caret line="176" selection-start-line="176" selection-end-line="176" />
               <folding>
                 <element signature="e#227#242#0" expanded="true" />
               </folding>
@@ -92,8 +81,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/metrics/frechet_inception_distance.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1062">
-              <caret line="32" column="63" lean-forward="true" selection-start-line="32" selection-start-column="63" selection-end-line="32" selection-end-column="63" />
+            <state>
+              <caret line="32" column="63" selection-start-line="32" selection-start-column="63" selection-end-line="32" selection-end-column="63" />
             </state>
           </provider>
         </entry>
@@ -101,17 +90,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/metrics/perceptual_path_length.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="468">
-              <caret line="102" column="24" lean-forward="true" selection-start-line="102" selection-start-column="24" selection-end-line="102" selection-end-column="24" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/Anaconda3/envs/tf_base/Lib/site-packages/tensorflow/python/ops/nn_ops.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="101268">
-              <caret line="2845" column="52" selection-start-line="2845" selection-start-column="52" selection-end-line="2845" selection-end-column="52" />
+            <state>
+              <caret line="102" column="24" selection-start-line="102" selection-start-column="24" selection-end-line="102" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -160,23 +140,22 @@
         <option value="$PROJECT_DIR$/training/invGAN2.py" />
         <option value="$PROJECT_DIR$/metrics/frechet_inception_distance.py" />
         <option value="$PROJECT_DIR$/metrics/perceptual_path_length.py" />
-        <option value="$PROJECT_DIR$/invMain.py" />
         <option value="$PROJECT_DIR$/training/invGAN.py" />
+        <option value="$PROJECT_DIR$/invMain.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="42" />
-    <option name="y" value="220" />
-    <option name="width" value="1936" />
-    <option name="height" value="1056" />
+    <option name="x" value="34" />
+    <option name="y" value="63" />
+    <option name="width" value="1705" />
+    <option name="height" value="1057" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -215,6 +194,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -223,7 +203,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -281,6 +261,8 @@
       <workItem from="1593352319590" duration="14134000" />
       <workItem from="1593691255557" duration="72558000" />
       <workItem from="1594814505683" duration="8404000" />
+      <workItem from="1595259328153" duration="2213000" />
+      <workItem from="1595557282998" duration="731000" />
     </task>
     <servers />
   </component>
@@ -290,12 +272,13 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="95096000" />
+    <option name="totallyTimeSpent" value="98040000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.19509594" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20042644" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -309,7 +292,7 @@
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="10" weight="0.32973894" />
-      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.17028199" />
+      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.1681128" />
       <window_info anchor="bottom" id="Python Console" order="12" weight="0.28091106" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -330,13 +313,7 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/training/glowGAN.py" />
     <entry file="file://$PROJECT_DIR$/training/glow_ops.py" />
-    <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/tensorflow/python/ops/gen_nn_ops.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="792">
-          <caret line="935" column="41" lean-forward="true" selection-start-line="935" selection-start-column="41" selection-end-line="935" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/tensorflow/python/ops/gen_nn_ops.py" />
     <entry file="file://$PROJECT_DIR$/training/networks_stylegan2_resample.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -359,13 +336,7 @@
     <entry file="file://$PROJECT_DIR$/training/iconv2d/inverses/inverse_op_cython.pyxbld" />
     <entry file="file://$PROJECT_DIR$/training/iconv2d/conv2d.py" />
     <entry file="file://$PROJECT_DIR$/training/iconv2d/emerge_conv2d.py" />
-    <entry file="file://$USER_HOME$/Anaconda3/envs/tf_base/Lib/site-packages/tensorflow_probability/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="7" column="1" lean-forward="true" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/Anaconda3/envs/tf_base/Lib/site-packages/tensorflow_probability/__init__.py" />
     <entry file="file://$PROJECT_DIR$/dnnlib/tflib/ops/upfirdn_2d.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-3863">
@@ -383,13 +354,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Anaconda3/envs/tf_base/Lib/site-packages/tensorflow/python/ops/gen_nn_ops.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="5446" column="51" lean-forward="true" selection-start-line="5446" selection-start-column="51" selection-end-line="5446" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/Anaconda3/envs/tf_base/Lib/site-packages/tensorflow/python/ops/gen_nn_ops.py" />
     <entry file="file://$PROJECT_DIR$/dnnlib/tflib/ops/fused_bias_act.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3240">
@@ -397,20 +362,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Anaconda3/envs/tf_base/Lib/site-packages/tensorflow/python/ops/nn_ops.py">
+    <entry file="file://$USER_HOME$/Anaconda3/envs/tf_base/Lib/site-packages/tensorflow/python/ops/nn_ops.py" />
+    <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="101268">
-          <caret line="2845" column="52" selection-start-line="2845" selection-start-column="52" selection-end-line="2845" selection-end-column="52" />
+        <state relative-caret-position="-972">
+          <caret line="38" column="53" selection-start-line="38" selection-start-column="53" selection-end-line="38" selection-end-column="53" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/training/dcgan.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$USER_HOME$/Anaconda3/envs/tf_base/Lib/site-packages/tensorflow/python/ops/gen_array_ops.py" />
     <entry file="file://$PROJECT_DIR$/training/invGAN2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="734">
-          <caret line="925" column="23" lean-forward="true" selection-start-line="925" selection-start-column="23" selection-end-line="925" selection-end-column="23" />
+        <state relative-caret-position="1821">
+          <caret line="905" lean-forward="true" selection-start-line="905" selection-end-line="905" />
           <folding>
             <element signature="e#27072#27329#0" />
             <element signature="e#27383#27983#0" />
@@ -420,48 +384,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/training/iconv2d/conv2d_bijectors.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
-          <caret line="9" column="29" selection-start-line="9" selection-start-column="29" selection-end-line="9" selection-end-column="29" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/metrics/frechet_inception_distance.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1062">
-          <caret line="32" column="63" lean-forward="true" selection-start-line="32" selection-start-column="63" selection-end-line="32" selection-end-column="63" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/metrics/perceptual_path_length.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="102" column="24" lean-forward="true" selection-start-line="102" selection-start-column="24" selection-end-line="102" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-972">
-          <caret line="38" column="53" selection-start-line="38" selection-start-column="53" selection-end-line="38" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/training/training_loop.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4680">
-          <caret line="19" column="61" selection-start-line="19" selection-start-column="61" selection-end-line="19" selection-end-column="61" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/training/networks_stylegan2.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
-          <caret line="418" column="44" lean-forward="true" selection-start-line="418" selection-start-column="44" selection-end-line="418" selection-end-column="44" />
+          <caret line="418" column="44" selection-start-line="418" selection-start-column="44" selection-end-line="418" selection-end-column="44" />
           <folding>
             <element signature="e#285#303#0" expanded="true" />
           </folding>
@@ -470,34 +396,61 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dnnlib/tflib/network.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
+        <state>
           <caret line="175" column="13" selection-start-line="175" selection-start-column="13" selection-end-line="175" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Anaconda3/envs/tf_base/Lib/site-packages/tensorflow/python/ops/gen_array_ops.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="873" lean-forward="true" selection-start-line="873" selection-end-line="873" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/invMain.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="59" column="19" lean-forward="true" selection-start-line="59" selection-start-column="19" selection-end-line="59" selection-end-column="19" />
+        <state>
+          <caret line="176" selection-start-line="176" selection-end-line="176" />
           <folding>
             <element signature="e#227#242#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/metrics/frechet_inception_distance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret line="32" column="63" selection-start-line="32" selection-start-column="63" selection-end-line="32" selection-end-column="63" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/metrics/perceptual_path_length.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret line="102" column="24" selection-start-line="102" selection-start-column="24" selection-end-line="102" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/training/dcgan.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/training/training_loop.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-17">
+          <caret line="43" column="77" selection-start-line="43" selection-start-column="77" selection-end-line="43" selection-end-column="77" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/training/invGAN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="588">
-          <caret line="419" column="49" lean-forward="true" selection-start-line="419" selection-start-column="49" selection-end-line="419" selection-end-column="49" />
+        <state relative-caret-position="-17">
+          <caret line="419" column="49" selection-start-line="419" selection-start-column="49" selection-end-line="419" selection-end-column="49" />
           <folding>
             <element signature="e#285#303#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/training/iconv2d/conv2d_bijectors.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="229">
+          <caret line="79" column="49" selection-start-line="79" selection-start-column="49" selection-end-line="79" selection-end-column="49" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>

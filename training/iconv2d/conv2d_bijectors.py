@@ -192,6 +192,130 @@ def invertible_conv2D_emerging(
             return x, logdet
 
 
+def fast_inv_conv2d(
+        name, z, logdet, ksize=3, dilation=1, reverse=False,
+        checkpoint_fn=None):
+    batchsize, height, width, n_channels = int_shape(z)
+
+    assert (ksize - 1) % 2 == 0
+
+    kcent = (ksize - 1) // 2
+
+    with tf.variable_scope(name):
+        mask_np = get_conv_square_ar_mask(
+            ksize, ksize, n_channels, n_channels,
+            zerodiagonal=True)[::-1, ::-1, ::-1, ::-1].copy()
+        mask = tf.constant(mask_np)
+
+        # print(mask_np.transpose(3, 2, 0, 1))
+
+        filter_shape = [ksize, ksize, n_channels, n_channels]
+
+        w1_np = get_conv_weight_np(filter_shape)
+        w2_np = get_conv_weight_np(filter_shape)
+        w1 = tf.get_variable('W1', dtype=tf.float32, initializer=w1_np)
+        w2 = tf.get_variable('W2', dtype=tf.float32, initializer=w2_np)
+        b = tf.get_variable('b', [n_channels],
+                            initializer=tf.zeros_initializer())
+        b = tf.reshape(b, [1, 1, 1, -1])
+
+        w1 = w1 * mask
+        w2 = w2 * mask
+
+        s_np = (1 + np.random.randn(n_channels) * 0.02).astype('float32')
+        s = tf.get_variable('scale', dtype=tf.float32, initializer=s_np)
+        s = tf.reshape(s, [1, 1, 1, n_channels])
+
+        def flat(z):
+            return tf.reshape(z, [batchsize, height * width * n_channels])
+
+        def unflat(z):
+            return tf.reshape(z, [batchsize, height, width, n_channels])
+
+        def shift_and_log_scale_fn_volume_preserving_1(z_flat):
+            z = unflat(z_flat)
+
+            shift = tf.nn.conv2d(
+                z, w1, [1, 1, 1, 1],
+                dilations=[1, dilation, dilation, 1],
+                padding='SAME', data_format='NHWC')
+
+            shift_flat = flat(shift)
+
+            return shift_flat, tf.zeros_like(shift_flat)
+
+        def shift_and_log_scale_fn_volume_preserving_2(z_flat):
+            z = unflat(z_flat)
+
+            shift = tf.nn.conv2d(
+                z, w2, [1, 1, 1, 1],
+                dilations=[1, dilation, dilation, 1],
+                padding='SAME', data_format='NHWC')
+
+            shift_flat = flat(shift)
+
+            return shift_flat, tf.zeros_like(shift_flat)
+
+        flow1 = tfb.MaskedAutoregressiveFlow(
+            shift_and_log_scale_fn_volume_preserving_1
+            )
+
+        flow2 = tfb.MaskedAutoregressiveFlow(
+            shift_and_log_scale_fn_volume_preserving_2
+            )
+
+        def flip(z_flat):
+            z = unflat(z_flat)
+            z = z[:, ::-1, ::-1, ::-1]
+            z = flat(z)
+            return z
+
+        def forward(z):
+            z = z * s
+
+            z_flat = flat(z)
+
+            z_flat = flow1.forward(z_flat)
+
+            z_flat = flip(z_flat)
+            z_flat = flow2.forward(z_flat)
+            z_flat = flip(z_flat)
+
+            z = unflat(z_flat)
+
+            z = z + b
+            return z
+
+        def inverse(z):
+            z = z - b
+
+            z_flat = flat(z)
+
+            z_flat = flip(z_flat)
+            z_flat = flow2.inverse(z_flat)
+            z_flat = flip(z_flat)
+
+            z_flat = flow1.inverse(z_flat)
+
+            z = unflat(z_flat)
+
+            z = z / s
+
+            z = unflat(z)
+
+            return z
+
+        if not reverse:
+            x = forward(z)
+
+            return x
+
+        else:
+            x = inverse(z)
+
+            return x
+
+
 def test_layer(layer, kwargs):
     shape = [128, 32, 32, 3]
 
