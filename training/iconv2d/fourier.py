@@ -224,6 +224,143 @@ def fourier_conv(
             return z, logdet
 
 
+def fast_fourier_conv(
+        name, z, logdet, ksize=3, reverse=False,
+        checkpoint_fn=None, use_fourier_forward=False):
+    batchsize, height, width, n_channels = int_shape(z)
+
+    assert (ksize - 1) % 2 == 0
+
+    with tf.variable_scope(name):
+        filter_shape = [ksize, ksize, n_channels, n_channels]
+
+        w_np = get_conv_weight_np(filter_shape)
+        w = tf.get_variable('W', dtype=tf.float32, initializer=w_np)
+        b = tf.get_variable('b', [n_channels],
+                            initializer=tf.zeros_initializer())
+        b = tf.reshape(b, [1, 1, 1, -1])
+
+        f_shape = [height, width]
+
+        def forward(z, w):
+            padsize = (ksize - 1) // 2
+            # Circular padding.
+            z = tf.concat(
+                (z[:, -padsize:, :], z, z[:, :padsize, :]),
+                axis=1)
+
+            z = tf.concat(
+                (z[:, :, -padsize:], z, z[:, :, :padsize]),
+                axis=2)
+
+            # Circular convolution (due to padding.)
+            z = tf.nn.conv2d(
+                z, w, [1, 1, 1, 1],
+                padding='VALID', data_format='NHWC')
+
+            z = z + b
+
+            return z
+
+        def forward_fourier(x, w):
+            # Dimension [b, c, v, u]
+            x_fft = tf.spectral.rfft2d(
+                tf.transpose(x, [0, 3, 1, 2]),
+                fft_length=f_shape,
+                name=None
+            )
+
+            # Dimension [b, 1, c_in, v, u]
+            x_fft = tf.expand_dims(x_fft, 1)
+
+            # Dimension [c_out, c_in, v, u]
+            w_fft = tf.spectral.rfft2d(
+                tf.transpose(w, [3, 2, 0, 1])[:, :, ::-1, ::-1],
+                fft_length=f_shape,
+                name=None
+            )
+
+            # logdet += compute_logdet(w_fft, width)
+
+            # Dimension [1, c_out, c_in, v, u]
+            w_fft = tf.expand_dims(w_fft, 0)
+
+            z_fft = tf.reduce_sum(
+                tf.multiply(x_fft, w_fft), axis=2)
+
+            z = tf.spectral.irfft2d(
+                z_fft,
+                fft_length=f_shape,
+            )
+
+            z = tf.transpose(z, [0, 2, 3, 1])
+
+            z = reindex(z)
+
+            z = z + b
+            return z
+
+        def inverse(z):
+            z = z - b
+
+            z = reindex(z, reverse=True)
+
+            # Dimension [b, c_out, v, u]
+            z_fft = tf.spectral.rfft2d(
+                tf.transpose(z, [0, 3, 1, 2]),
+                fft_length=f_shape,
+                name=None
+            )
+
+            # Dimension [b, 1, c_out, v, u]
+            z_fft = tf.expand_dims(z_fft, 1)
+
+            # Dimension [c_out, c_in, v, u]
+            w_fft = tf.spectral.rfft2d(
+                tf.transpose(w, [3, 2, 0, 1])[:, :, ::-1, ::-1],
+                fft_length=f_shape,
+                name=None
+            )
+
+            # Dimension [v, u, c_in, c_out], channels switched because of
+            # inverse.
+            w_fft_inv = tf.linalg.inv(
+                tf.transpose(w_fft, [2, 3, 0, 1]),
+                )
+            # Dimension [c_in, c_out, v, u]
+            w_fft_inv = tf.transpose(w_fft_inv, [2, 3, 0, 1])
+
+            # Dimension [1, c_in, c_out, v, u]
+            w_fft_inv = tf.expand_dims(w_fft_inv, 0)
+
+            x_fft = tf.reduce_sum(
+                tf.multiply(z_fft, w_fft_inv), axis=2)
+
+            x = tf.spectral.irfft2d(
+                x_fft,
+                fft_length=f_shape,
+            )
+
+            x = tf.transpose(x, [0, 2, 3, 1])
+
+            return x
+
+        if not reverse:
+            x = z
+
+            if use_fourier_forward:
+                z = forward_fourier(x, w)
+            else:
+                z = forward(x, w)
+
+            return z, None
+
+        else:
+            z = inverse(z)
+
+            return z, None
+
+
 def rmse(a, b):
     return np.sqrt(np.mean(np.power(a - b, 2)))
 

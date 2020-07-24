@@ -13,7 +13,8 @@ import dnnlib.tflib as tflib
 from dnnlib.tflib.ops.upfirdn_2d import upsample_2d, downsample_2d, upsample_conv_2d, conv_downsample_2d
 from dnnlib.tflib.ops.fused_bias_act import fused_bias_act
 # from training.iconv2d.conv2d_bijectors import invertible_conv2D_emerging as invConv2D
-from training.iconv2d.conv2d_bijectors import fast_inv_conv2d as invConv2D
+# from training.iconv2d.conv2d_bijectors import fast_inv_conv2d as invConv2D
+from training.iconv2d.fourier import fast_fourier_conv as invConv2D
 
 
 # NOTE: Do not import any application-specific modules here!
