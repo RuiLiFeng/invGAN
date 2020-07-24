@@ -308,12 +308,12 @@ def fast_inv_conv2d(
         if not reverse:
             x = forward(z)
 
-            return x
+            return x, None
 
         else:
             x = inverse(z)
 
-            return x
+            return x, None
 
 
 def test_layer(layer, kwargs):
