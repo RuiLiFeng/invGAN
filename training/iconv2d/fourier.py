@@ -91,14 +91,13 @@ def fourier_conv(
         def forward(z, w, logdet):
             padsize = (ksize - 1) // 2
             # Circular padding.
-            if padsize != 0:
-                z = tf.concat(
-                    (z[:, -padsize:, :], z, z[:, :padsize, :]),
-                    axis=1)
+            z = tf.concat(
+                (z[:, -padsize:, :], z, z[:, :padsize, :]),
+                axis=1)
 
-                z = tf.concat(
-                    (z[:, :, -padsize:], z, z[:, :, :padsize]),
-                    axis=2)
+            z = tf.concat(
+                (z[:, :, -padsize:], z, z[:, :, :padsize]),
+                axis=2)
 
             # Circular convolution (due to padding.)
             z = tf.nn.conv2d(
@@ -246,14 +245,13 @@ def fast_fourier_conv(
         def forward(z, w):
             padsize = (ksize - 1) // 2
             # Circular padding.
-            if padsize != 0:
-                z = tf.concat(
-                    (z[:, -padsize:, :], z, z[:, :padsize, :]),
-                    axis=1)
+            z = tf.concat(
+                (z[:, -padsize:, :], z, z[:, :padsize, :]),
+                axis=1)
 
-                z = tf.concat(
-                    (z[:, :, -padsize:], z, z[:, :, :padsize]),
-                    axis=2)
+            z = tf.concat(
+                (z[:, :, -padsize:], z, z[:, :, :padsize]),
+                axis=2)
 
             # Circular convolution (due to padding.)
             z = tf.nn.conv2d(
