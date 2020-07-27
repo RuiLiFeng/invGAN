@@ -844,7 +844,7 @@ def D_stylegan2(
 from training.invGAN import *
 f = G_quotient
 q= Q_infer
-d = 3
+d = 4
 resolution=64
 z = tf.random.normal([8,4096*d])
 with tf.variable_scope('test',reuse=tf.AUTO_REUSE):

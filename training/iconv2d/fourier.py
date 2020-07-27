@@ -70,6 +70,23 @@ def reindex(z, reverse=False):
     return z
 
 
+def get_weight(shape, gain=1, use_wscale=True, lrmul=1, weight_var='weight'):
+    fan_in = np.prod(shape[:-1]) # [kernel, kernel, fmaps_in, fmaps_out] or [in, out]
+    he_std = gain / np.sqrt(fan_in) # He init
+
+    # Equalized learning rate and custom learning rate multiplier.
+    if use_wscale:
+        init_std = 1.0 / lrmul
+        runtime_coef = he_std * lrmul
+    else:
+        init_std = he_std / lrmul
+        runtime_coef = lrmul
+
+    # Create variable.
+    init = tf.initializers.random_normal(0, init_std)
+    return tf.get_variable(weight_var, shape=shape, initializer=init) * runtime_coef
+
+
 def fourier_conv(
         name, z, logdet, ksize=3, reverse=False,
         checkpoint_fn=None, use_fourier_forward=False):
@@ -80,8 +97,9 @@ def fourier_conv(
     with tf.variable_scope(name):
         filter_shape = [ksize, ksize, n_channels, n_channels]
 
-        w_np = get_conv_weight_np(filter_shape)
-        w = tf.get_variable('W', dtype=tf.float32, initializer=w_np)
+        # w_np = get_conv_weight_np(filter_shape)
+        # w = tf.get_variable('W', dtype=tf.float32, initializer=w_np)
+        w = get_weight(filter_shape)
         b = tf.get_variable('b', [n_channels],
                             initializer=tf.zeros_initializer())
         b = tf.reshape(b, [1, 1, 1, -1])
