@@ -57,7 +57,8 @@ def run(dataset, data_dir, result_dir, config_id, num_gpus, total_kimg, gamma, m
     G.synthesis_func = 'G_quotient'
     # G.latents_size = 4096 * 3
     G.dlatent_size = 4096 * 3
-    G.style_mixing_prob = None
+    G.latent_size = 4096 * 3
+    G.mapping_fmaps = 4096 * 3
     G.fmap_final = 3
     metrics = [metric_defaults[x] for x in metrics]
     desc = 'InvGan'
