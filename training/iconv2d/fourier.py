@@ -100,6 +100,8 @@ def fourier_conv(
         # w_np = get_conv_weight_np(filter_shape)
         # w = tf.get_variable('W', dtype=tf.float32, initializer=w_np)
         w = get_weight(filter_shape)
+        d = tf.rsqrt(tf.reduce_sum(tf.square(w), axis=[0, 1, 2]) + 1e-8)
+        w *= d[np.newaxis, np.newaxis, np.newaxis, :]
         b = tf.get_variable('b', [n_channels],
                             initializer=tf.zeros_initializer())
         b = tf.reshape(b, [1, 1, 1, -1])
