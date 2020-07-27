@@ -637,6 +637,7 @@ def Q_infer(
             if res == resolution_log2:
                 x = inv_torgb(res, x)
             x = inv_block(res, x)
+            print(x)
 
         # Early layers.
     with tf.variable_scope('4x4', reuse=tf.AUTO_REUSE):
@@ -845,11 +846,12 @@ from training.invGAN import *
 f = G_quotient
 q= Q_infer
 d = 3
+resolution=64
 z = tf.random.normal([8,4096*d])
 with tf.variable_scope('test',reuse=tf.AUTO_REUSE):
-    x =G_quotient(z,4096*d,fmap_final=d)
-    z1 =q(x, 4096*d, fmap_final=d)
-    x1 = G_quotient(z1,4096*d,fmap_final=d)
+    x =G_quotient(z,4096*d,fmap_final=d, resolution=resolution)
+    z1 =q(x, 4096*d, fmap_final=d, resolution=resolution)
+    x1 = G_quotient(z1,4096*d,fmap_final=d, resolution=resolution)
 
 def err(a,b):return tf.reduce_sum(tf.square(a-b))
 
