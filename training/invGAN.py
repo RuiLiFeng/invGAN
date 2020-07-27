@@ -244,6 +244,7 @@ def inv_toRGB(name, x, fin, reverse=False):
                 assert fin == x.shape[3].value
                 logdet = tf.zeros_like(x)[:, 0, 0, 0]
                 x, _ = invConv2D('channel_shuffle', x, logdet, ksize=3, reverse=False)
+                print(x)
                 x, _ = invConv2D('toRGB', x, logdet, ksize=1, reverse=False)
 
             else:

@@ -40,8 +40,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/training/invGAN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="218">
-              <caret line="639" column="12" selection-start-line="639" selection-start-column="12" selection-end-line="639" selection-end-column="12" />
+            <state relative-caret-position="542">
+              <caret line="567" column="19" selection-start-line="567" selection-start-column="19" selection-end-line="567" selection-end-column="19" />
               <folding>
                 <element signature="e#285#303#0" expanded="true" />
               </folding>
@@ -294,7 +294,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="102530000" />
+    <option name="totallyTimeSpent" value="102801000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -313,7 +313,7 @@
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="10" weight="0.32973894" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.20065077" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.23101953" />
       <window_info anchor="bottom" id="Python Console" order="12" weight="0.28091106" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -481,8 +481,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/training/invGAN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="218">
-          <caret line="639" column="12" selection-start-line="639" selection-start-column="12" selection-end-line="639" selection-end-column="12" />
+        <state relative-caret-position="542">
+          <caret line="567" column="19" selection-start-line="567" selection-start-column="19" selection-end-line="567" selection-end-column="19" />
           <folding>
             <element signature="e#285#303#0" expanded="true" />
           </folding>
