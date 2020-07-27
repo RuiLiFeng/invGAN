@@ -507,7 +507,6 @@ def G_quotient(
     images_out = None
     dlatents_in.set_shape([None, num_layers, dlatent_size])
     dlatents_in = tf.cast(dlatents_in, dtype)
-    latents_in = dlatents_in
     latents_in = dlatents_in[:, 0, :]
 
 
