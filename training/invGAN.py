@@ -244,7 +244,6 @@ def inv_toRGB(name, x, fin, reverse=False):
                 assert fin == x.shape[3].value
                 logdet = tf.zeros_like(x)[:, 0, 0, 0]
                 x, _ = invConv2D('channel_shuffle', x, logdet, ksize=3, reverse=False)
-                print(x)
                 x, _ = invConv2D('toRGB', x, logdet, ksize=1, reverse=False)
 
             else:
@@ -566,7 +565,6 @@ def G_quotient(
             x = block(res, x)
             if res == resolution_log2:
                 x = torgb(res, x)
-            print(x)
 
     images_out = tf.transpose(x, [0, 3, 1, 2])
 
@@ -639,7 +637,6 @@ def Q_infer(
             if res == resolution_log2:
                 x = inv_torgb(res, x)
             x = inv_block(res, x)
-            print(x)
 
         # Early layers.
     with tf.variable_scope('4x4', reuse=tf.AUTO_REUSE):
