@@ -565,6 +565,7 @@ def G_quotient(
             x = block(res, x)
             if res == resolution_log2:
                 x = torgb(res, x)
+            print(x)
 
     images_out = tf.transpose(x, [0, 3, 1, 2])
 
