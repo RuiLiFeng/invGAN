@@ -492,12 +492,11 @@ def G_quotient(
     fmap_final          = 4,
     use_noise           = False,
     **_kwargs):
-    latents_size = dlatent_size
-    dlatents_in = dlatents_in[:, 0, :]
-    assert latents_size == fmap_final * resolution * resolution and latents_size % 16 == 0, "latents_size %d," \
+
+    assert dlatent_size == fmap_final * resolution * resolution and dlatent_size % 16 == 0, "dlatent_size %d," \
                                                                                             "fmap_final %d, " \
                                                                                             "resolution %d," \
-                                                                                            % (latents_size,
+                                                                                            % (dlatent_size,
                                                                                                fmap_final,
                                                                                                resolution)
     assert num_channels == 3
@@ -506,11 +505,13 @@ def G_quotient(
     assert resolution == 2 ** resolution_log2 and resolution >= 4
     num_layers = resolution_log2 * 2 - 2
     images_out = None
+    dlatents_in.set_shape([None, num_layers, dlatent_size])
+    dlatents_in = tf.cast(dlatents_in, dtype)
     latents_in = dlatents_in
+    latents_in = dlatents_in[:, 0, :]
+
 
     # Primary inputs
-    latents_in.set_shape([None, latents_size])
-    latents_in = tf.cast(latents_in, dtype)
     # lod_in = tf.cast(tf.get_variable('lod', initializer=np.float32(0), trainable=False), dtype)
 
     # Noise inputs.
@@ -539,7 +540,7 @@ def G_quotient(
 
     # Early layers.
     with tf.variable_scope('4x4'):
-        x = tf.reshape(latents_in, [-1, 4, 4, latents_size // 16])
+        x = tf.reshape(latents_in, [-1, 4, 4, dlatent_size // 16])
         with tf.variable_scope('Conv'):
             x = layer(x, layer_idx=0)
 
@@ -573,7 +574,7 @@ def G_quotient(
 
 def Q_infer(
         images_in,
-        latents_size,
+        dlatent_size,
         resolution           = 64,
         num_channels         = 3,
         fmap_final           = 4,
@@ -582,7 +583,7 @@ def Q_infer(
         nonlinearity         = 'lrelu',
         dtype                = 'float32',
         **_kwargs):
-    assert latents_size == fmap_final * resolution * resolution and latents_size % 16 == 0
+    assert dlatent_size == fmap_final * resolution * resolution and dlatent_size % 16 == 0
     assert num_channels == 3
     act = nonlinearity
     resolution_log2 = int(np.log2(resolution))
