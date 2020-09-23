@@ -160,10 +160,10 @@ def Inv_UpSample(name, x, scale=False, reverse=False):
     :param reverse: up sampling or down sampling
     :return: output tensor, [NHWC]
     """
-    with tf.variable_scope(name, reuse=tf.AUTO_REUSE):
+    with tf.variable_scope(name):
         if not reverse:
             if scale:
-                with tf.variable_scope('ConvScale', reuse=tf.AUTO_REUSE):
+                with tf.variable_scope('ConvScale'):
                     logdet1 = tf.zeros_like(x)[:, 0, 0, 0]
                     x1, _ = invConv2D('invConv1', x, logdet1, reverse=False)
                     x2, _ = invConv2D('invConv2', x, logdet1, reverse=False)
@@ -178,7 +178,7 @@ def Inv_UpSample(name, x, scale=False, reverse=False):
             x, _ = invConv2D('invConv', x, logdet, reverse=True)
             x = downshape(x)
             if scale:
-                with tf.variable_scope('ConvScale', reuse=tf.AUTO_REUSE):
+                with tf.variable_scope('ConvScale'):
                     logdet = tf.zeros_like(x)[:, 0, 0, 0]
                     x, _ = invConv2D('invConv1', x[:, :, :, :x.shape[3].value // 4], logdet, reverse=True)
         return x
@@ -213,7 +213,7 @@ def downscale_conv2d_layer(name, x, factor, reverse=False):
     :param reverse: whether compute reverse
     :return:
     """
-    with tf.variable_scope(name, reuse=tf.AUTO_REUSE):
+    with tf.variable_scope(name):
         if not reverse:
             assert x.shape[3].value % factor == 0, "factor %d of downscale conv2d layer must" \
                                                   " be factor of input channel %d!" % (factor, x.shape[3].value)
@@ -238,7 +238,7 @@ def inv_toRGB(name, x, fin, reverse=False):
     :param reverse:
     :return:
     """
-    with tf.variable_scope(name, reuse=tf.AUTO_REUSE):
+    with tf.variable_scope(name):
         if fin == 3:
             if not reverse:
                 assert fin == x.shape[3].value
@@ -616,29 +616,29 @@ def Q_infer(
         x = inv_module_conv2d_layer(x, up, downscale, reverse=True)
         return x
     def inv_block(res, x):
-        with tf.variable_scope('%dx%d' % (2 ** res, 2 ** res), reuse=tf.AUTO_REUSE):
-            with tf.variable_scope('Conv1', reuse=tf.AUTO_REUSE):
+        with tf.variable_scope('%dx%d' % (2 ** res, 2 ** res)):
+            with tf.variable_scope('Conv1'):
                 x = inv_layer(x, layer_idx=res * 2 - 4, up=False)
-            with tf.variable_scope('Conv0_up', reuse=tf.AUTO_REUSE):
+            with tf.variable_scope('Conv0_up'):
                 x = inv_layer(x, layer_idx=res * 2 - 5, up=True)
             return x
     def inv_torgb(res, x):
         lod = resolution_log2 - res
-        with tf.variable_scope('ToRGB_lod%d' % lod, reuse=tf.AUTO_REUSE):
+        with tf.variable_scope('ToRGB_lod%d' % lod):
             x = inv_bias_act(x, reverse=True)
             x = inv_toRGB('Conv', x, fmap_final, reverse=True)
             return x
 
     x = images_in
     for res in range(resolution_log2, 3 - 1, -1):
-        with tf.variable_scope('%dx%d' % (2**res, 2**res), reuse=tf.AUTO_REUSE):
+        with tf.variable_scope('%dx%d' % (2**res, 2**res)):
             if res == resolution_log2:
                 x = inv_torgb(res, x)
             x = inv_block(res, x)
 
         # Early layers.
-    with tf.variable_scope('4x4', reuse=tf.AUTO_REUSE):
-        with tf.variable_scope('Conv', reuse=tf.AUTO_REUSE):
+    with tf.variable_scope('4x4'):
+        with tf.variable_scope('Conv'):
             x = inv_layer(x, layer_idx=0)
         latents = tf.reshape(x, [-1, np.prod(x.shape[1:])])
 

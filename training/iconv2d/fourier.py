@@ -255,8 +255,10 @@ def fast_fourier_conv(
         filter_shape = [ksize, ksize, n_channels, n_channels]
 
         w_np = get_conv_weight_np(filter_shape)
-        w = tf.get_variable('W', dtype=tf.float32, initializer=w_np)
-        b = tf.get_variable('b', [n_channels],
+        w = tf.get_variable('weight', dtype=tf.float32, initializer=w_np)
+        d = tf.rsqrt(tf.reduce_sum(tf.square(w), axis=[0, 1, 2]) + 1e-8)
+        w *= d[np.newaxis, np.newaxis, np.newaxis, :]
+        b = tf.get_variable('bias', [n_channels],
                             initializer=tf.zeros_initializer())
         b = tf.reshape(b, [1, 1, 1, -1])
 
