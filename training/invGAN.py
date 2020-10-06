@@ -593,12 +593,12 @@ def Q_infer(
     images_in = tf.cast(images_in, dtype)
 
     noise_inputs = []
-    for layer_idx in range(num_layers - 1):
-        res = (layer_idx + 5) // 2
-        shape = [1, 1, 2 ** res, 2 ** res]
-        noise_inputs.append(
-            tf.get_variable('noise_inf%d' % layer_idx, shape=shape, initializer=tf.initializers.random_normal(),
-                            trainable=False))
+    # for layer_idx in range(num_layers - 1):
+    #     res = (layer_idx + 5) // 2
+    #     shape = [1, 1, 2 ** res, 2 ** res]
+    #     noise_inputs.append(
+    #         tf.get_variable('noise_inf%d' % layer_idx, shape=shape, initializer=tf.initializers.random_normal(),
+    #                         trainable=False))
 
 
     def inv_layer(x, layer_idx, up=False):
