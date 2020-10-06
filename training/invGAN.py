@@ -491,6 +491,7 @@ def G_quotient(
     fused_modconv       = True,
     fmap_final          = 4,
     use_noise           = False,
+    report_layer        = False,
     **_kwargs):
 
     assert dlatent_size == fmap_final * resolution * resolution and dlatent_size % 16 == 0, "dlatent_size %d," \
@@ -572,7 +573,10 @@ def G_quotient(
     images_out = tf.transpose(x, [0, 3, 1, 2])
 
     assert images_out.dtype == tf.as_dtype(dtype)
-    return tf.identity(images_out, name='images_out'), layer_dict
+    if report_layer:
+        return tf.identity(images_out, name='images_out'), layer_dict
+    else:
+        return tf.identity(images_out, name='images_out')
 
 
 
