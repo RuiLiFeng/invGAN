@@ -522,6 +522,8 @@ def G_quotient(
             tf.get_variable('noise%d' % layer_idx, shape=shape, initializer=tf.initializers.random_normal(),
                             trainable=False))
 
+    layer_dict = {}
+
     # Single Conv layer
     def layer(x, layer_idx, up=False):
         # downscale = (layer_idx >= 8)
@@ -540,6 +542,7 @@ def G_quotient(
     # Early layers.
     with tf.variable_scope('4x4'):
         x = tf.reshape(latents_in, [-1, 4, 4, dlatent_size // 16])
+        layer_dict.update({'layer4x4': x})
         with tf.variable_scope('Conv'):
             x = layer(x, layer_idx=0)
 
@@ -561,13 +564,15 @@ def G_quotient(
     for res in range(3, resolution_log2 + 1):
         with tf.variable_scope('%dx%d' % (2**res, 2**res)):
             x = block(res, x)
+            layer_dict.update({'block%dx%d'% (2**res, 2**res): x})
             if res == resolution_log2:
                 x = torgb(res, x)
+                layer_dict.update({'torgb': x})
 
     images_out = tf.transpose(x, [0, 3, 1, 2])
 
     assert images_out.dtype == tf.as_dtype(dtype)
-    return tf.identity(images_out, name='images_out')
+    return tf.identity(images_out, name='images_out'), layer_dict
 
 
 
@@ -630,20 +635,25 @@ def Q_infer(
             return x
 
     x = images_in
+
+    layer_dict = {}
     for res in range(resolution_log2, 3 - 1, -1):
         with tf.variable_scope('%dx%d' % (2**res, 2**res)):
             if res == resolution_log2:
                 x = inv_torgb(res, x)
+                layer_dict.update({'inv_torgb': x})
             x = inv_block(res, x)
+            layer_dict.update({'inv_block%dx%d'% (2**res, 2**res): x})
 
         # Early layers.
     with tf.variable_scope('4x4'):
         with tf.variable_scope('Conv'):
             x = inv_layer(x, layer_idx=0)
+            layer_dict.update({'inv_layer4x4': x})
         latents = tf.reshape(x, [-1, np.prod(x.shape[1:])])
 
     assert latents.dtype == tf.as_dtype(dtype)
-    return tf.identity(latents, name='latents_infered')
+    return tf.identity(latents, name='latents_infered'), layer_dict
 
 
 #----------------------------------------------------------------------------
