@@ -194,7 +194,7 @@ def invertible_conv2D_emerging(
 
 def fast_inv_conv2d(
         name, z, logdet, ksize=3, dilation=1, reverse=False,
-        checkpoint_fn=None):
+        checkpoint_fn=None, **kwargs):
     batchsize, height, width, n_channels = int_shape(z)
 
     assert (ksize - 1) % 2 == 0
