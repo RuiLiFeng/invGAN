@@ -245,7 +245,7 @@ def fourier_conv(
 
 
 def fast_fourier_conv(
-        name, z, logdet, ksize=3, reverse=False,
+        name, z, logdet, ksize=3, reg=0.0, reverse=False,
         checkpoint_fn=None, use_fourier_forward=False):
     batchsize, height, width, n_channels = int_shape(z)
 
@@ -367,6 +367,25 @@ def fast_fourier_conv(
 
             return x
 
+        def reg_(r=0.0, sigma=0.1):
+            # Dimension [c_out, c_in, v, u]
+            w_fft = tf.spectral.rfft2d(
+                tf.transpose(w, [3, 2, 0, 1])[:, :, ::-1, ::-1],
+                fft_length=f_shape,
+                name=None
+            )
+            # Dimension [v, u, c_in, c_out], channels switched because of
+            # inverse.
+            w_fft = tf.transpose(w_fft, [2, 3, 0, 1])
+            noise_re = tf.random.normal([64, w_fft.shape[-1].value])
+            noise_im = tf.random.normal([64, w_fft.shape[-1].value])
+            noise = tf.complex(noise_re, noise_im)
+            noise *= tf.complex(tf.rsqrt(tf.reduce_sum(tf.square(tf.math.abs(noise)), axis=1, keepdims=True)), 0.0)
+            noise_transform = tf.matmul(w_fft, tf.transpose(noise, [1, 0]))
+            transform_norm = tf.sqrt(tf.reduce_sum(tf.square(tf.math.abs(noise_transform)), axis=2))
+            pelnety = tf.reduce_sum(tf.nn.relu(sigma - transform_norm))
+            return r + pelnety
+
         if not reverse:
             x = z
 
@@ -375,7 +394,9 @@ def fast_fourier_conv(
             else:
                 z = forward(x, w)
 
-            return z, None
+            reg = reg_(reg)
+
+            return z, reg
 
         else:
             z = inverse(z)
@@ -545,4 +566,3 @@ if __name__ == '__main__':
 
     # test_performance(invertible_conv2D_fourier, {'use_fourier_forward':False})
     # test_performance(invertible_conv2D_fourier, {'use_fourier_forward':True})
-
