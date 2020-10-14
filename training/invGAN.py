@@ -346,8 +346,7 @@ def G_main(
 
     # Setup components.
     if 'synthesis' not in components:
-        components.synthesis = tflib.Network('G_synthesis', func_name=globals()[synthesis_func],
-                                             return_reg=True, **kwargs)
+        components.synthesis = tflib.Network('G_synthesis', func_name=globals()[synthesis_func], **kwargs)
     num_layers = components.synthesis.input_shape[1]
     dlatent_size = components.synthesis.input_shape[2]
     if 'mapping' not in components:
@@ -401,10 +400,15 @@ def G_main(
     # Return requested outputs.
 
     with tf.control_dependencies(deps):
-        images_out, reg = components.synthesis.get_output_for(dlatents,
-                                                              is_training=is_training,
-                                                              force_clean_graph=is_template_graph, **kwargs)
-
+        if return_reg:
+            images_out, reg = components.synthesis.get_output_for(dlatents,
+                                                                  is_training=is_training,
+                                                                  return_det=True,
+                                                                  force_clean_graph=is_template_graph, **kwargs)
+        else:
+            images_out = components.synthesis.get_output_for(dlatents,
+                                                             is_training=is_training,
+                                                             force_clean_graph=is_template_graph, **kwargs)
         # Return requested outputs.
     images_out = tf.identity(images_out, name='images_out')
     if return_dlatents:

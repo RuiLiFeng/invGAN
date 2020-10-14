@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cad875f8-3fc9-4ad1-9010-4817f0f2d259" name="Default Changelist" comment="" />
+    <list default="true" id="cad875f8-3fc9-4ad1-9010-4817f0f2d259" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +51,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/training/loss.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="435">
+            <state relative-caret-position="930">
               <caret line="232" lean-forward="true" selection-start-line="232" selection-end-line="232" />
             </state>
           </provider>
@@ -70,8 +72,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/training/invGAN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1861">
-              <caret line="351" column="54" lean-forward="true" selection-start-line="351" selection-start-column="54" selection-end-line="351" selection-end-column="54" />
+            <state relative-caret-position="-343">
+              <caret line="328" column="36" lean-forward="true" selection-start-line="328" selection-start-column="36" selection-end-line="328" selection-end-column="36" />
               <folding>
                 <element signature="e#285#303#0" expanded="true" />
               </folding>
@@ -294,7 +296,7 @@
       <workItem from="1600860243495" duration="2639000" />
       <workItem from="1602058505555" duration="8878000" />
       <workItem from="1602137484334" duration="7923000" />
-      <workItem from="1602575951661" duration="15815000" />
+      <workItem from="1602575951661" duration="17121000" />
     </task>
     <servers />
   </component>
@@ -304,10 +306,11 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="162049000" />
+    <option name="totallyTimeSpent" value="163355000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14978679" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -501,23 +504,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/training/iconv2d/fourier.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="369">
-          <caret line="390" column="26" lean-forward="true" selection-start-line="390" selection-start-column="26" selection-end-line="390" selection-end-column="26" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/training/loss.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="232" lean-forward="true" selection-start-line="232" selection-end-line="232" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/invMain.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="451">
@@ -559,10 +545,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/training/iconv2d/fourier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="369">
+          <caret line="390" column="26" lean-forward="true" selection-start-line="390" selection-start-column="26" selection-end-line="390" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/training/loss.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="930">
+          <caret line="232" lean-forward="true" selection-start-line="232" selection-end-line="232" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/training/invGAN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1861">
-          <caret line="351" column="54" lean-forward="true" selection-start-line="351" selection-start-column="54" selection-end-line="351" selection-end-column="54" />
+        <state relative-caret-position="-343">
+          <caret line="328" column="36" lean-forward="true" selection-start-line="328" selection-start-column="36" selection-end-line="328" selection-end-column="36" />
           <folding>
             <element signature="e#285#303#0" expanded="true" />
           </folding>
