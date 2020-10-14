@@ -552,7 +552,7 @@ def G_quotient(
         with tf.variable_scope('ToRGB_lod%d' % lod):
             x, logdet = inv_toRGB('Conv', x, x.shape[3].value, logdet=logdet)
             x = inv_bias_act(x)
-            return x
+            return x, logdet
 
     for res in range(3, resolution_log2 + 1):
         with tf.variable_scope('%dx%d' % (2**res, 2**res)):

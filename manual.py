@@ -23,10 +23,10 @@ resolution=64
 z = tf.random.normal([8,512])
 w = Gs.components.mapping.get_output_for(z,None)
 with tf.variable_scope('G_synthesis_1',reuse=True):
-    x =G_quotient(w,4096*d,fmap_final=d, resolution=resolution)
+    x,reg =G_quotient(w,4096*d,fmap_final=d, resolution=resolution, return_det=True)
     z1,_ =q(x, 4096*d, fmap_final=d, resolution=resolution)
     w1 = tf.tile(z1[:,np.newaxis],[1,10,1])
-    x1 = G_quotient(w1,4096*d,fmap_final=d, resolution=resolution)
+    x1, reg1 = G_quotient(w1,4096*d,fmap_final=d, resolution=resolution, return_det=True)
 
 def err(a,b):return tf.reduce_sum(tf.square(a-b))
 
