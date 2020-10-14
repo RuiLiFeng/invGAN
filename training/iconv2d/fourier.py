@@ -245,7 +245,7 @@ def fourier_conv(
 
 
 def fast_fourier_conv(
-        name, z, logdet, ksize=3, reg=0.0, reverse=False,
+        name, z, logdet, ksize=3, reverse=False,
         checkpoint_fn=None, use_fourier_forward=False):
     batchsize, height, width, n_channels = int_shape(z)
 
@@ -264,7 +264,7 @@ def fast_fourier_conv(
 
         f_shape = [height, width]
 
-        def forward(z, w):
+        def forward(z, w, logdet):
             padsize = (ksize - 1) // 2
             # Circular padding.
             z = tf.concat(
@@ -280,11 +280,21 @@ def fast_fourier_conv(
                 z, w, [1, 1, 1, 1],
                 padding='VALID', data_format='NHWC')
 
+            # Fourier transform for log determinant.
+            w_fft = tf.spectral.rfft2d(
+                tf.transpose(w, [3, 2, 0, 1])[:, :, ::-1, ::-1],
+                fft_length=f_shape,
+                name=None
+            )
+            dlogdet = compute_logdet(w_fft, width)
+
+            logdet += dlogdet
+
             z = z + b
 
-            return z
+            return z, logdet
 
-        def forward_fourier(x, w):
+        def forward_fourier(x, w, logdet):
             # Dimension [b, c, v, u]
             x_fft = tf.spectral.rfft2d(
                 tf.transpose(x, [0, 3, 1, 2]),
@@ -302,7 +312,7 @@ def fast_fourier_conv(
                 name=None
             )
 
-            # logdet += compute_logdet(w_fft, width)
+            logdet += compute_logdet(w_fft, width)
 
             # Dimension [1, c_out, c_in, v, u]
             w_fft = tf.expand_dims(w_fft, 0)
@@ -320,7 +330,7 @@ def fast_fourier_conv(
             z = reindex(z)
 
             z = z + b
-            return z
+            return z, logdet
 
         def inverse(z):
             z = z - b
@@ -367,36 +377,15 @@ def fast_fourier_conv(
 
             return x
 
-        def reg_(r=0.0, sigma=0.1):
-            # Dimension [c_out, c_in, v, u]
-            w_fft = tf.spectral.rfft2d(
-                tf.transpose(w, [3, 2, 0, 1])[:, :, ::-1, ::-1],
-                fft_length=f_shape,
-                name=None
-            )
-            # Dimension [v, u, c_in, c_out], channels switched because of
-            # inverse.
-            w_fft = tf.transpose(w_fft, [2, 3, 0, 1])
-            noise_re = tf.random.normal([64, w_fft.shape[-1].value])
-            noise_im = tf.random.normal([64, w_fft.shape[-1].value])
-            noise = tf.complex(noise_re, noise_im)
-            noise *= tf.complex(tf.rsqrt(tf.reduce_sum(tf.square(tf.math.abs(noise)), axis=1, keepdims=True)), 0.0)
-            noise_transform = tf.matmul(w_fft, tf.transpose(noise, [1, 0]))
-            transform_norm = tf.sqrt(tf.reduce_sum(tf.square(tf.math.abs(noise_transform)), axis=2))
-            pelnety = tf.reduce_sum(tf.nn.relu(sigma - transform_norm))
-            return r + pelnety
-
         if not reverse:
             x = z
 
             if use_fourier_forward:
-                z = forward_fourier(x, w)
+                z, logdet = forward_fourier(x, w, logdet)
             else:
-                z = forward(x, w)
+                z, logdet = forward(x, w, logdet)
 
-            reg = reg_(reg)
-
-            return z, reg
+            return z, logdet
 
         else:
             z = inverse(z)

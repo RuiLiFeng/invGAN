@@ -13,8 +13,8 @@ import dnnlib.tflib as tflib
 from dnnlib.tflib.ops.upfirdn_2d import upsample_2d, downsample_2d, upsample_conv_2d, conv_downsample_2d
 from dnnlib.tflib.ops.fused_bias_act import fused_bias_act
 # from training.iconv2d.conv2d_bijectors import invertible_conv2D_emerging as invConv2D
-from training.iconv2d.conv2d_bijectors import fast_inv_conv2d as invConv2D
-# from training.iconv2d.fourier import fast_fourier_conv as invConv2D
+# from training.iconv2d.conv2d_bijectors import fast_inv_conv2d as invConv2D
+from training.iconv2d.fourier import fast_fourier_conv as invConv2D
 
 
 # NOTE: Do not import any application-specific modules here!
@@ -150,7 +150,7 @@ def minibatch_stddev_layer(x, group_size=4, num_new_features=1):
 
 #----------------------------------------------------------------------------
 # Invertible Up and sampling
-def Inv_UpSample(name, x, scale=False, reverse=False):
+def Inv_UpSample(name, x, scale=False, reverse=False, logdet=0.0):
     """
     Upsample the given inputs by factor 2x2, but will decrease the channel num by factor of 4, such that
     the overall number of units remains unchanged
@@ -164,24 +164,20 @@ def Inv_UpSample(name, x, scale=False, reverse=False):
         if not reverse:
             if scale:
                 with tf.variable_scope('ConvScale'):
-                    logdet1 = tf.zeros_like(x)[:, 0, 0, 0]
-                    x1, _ = invConv2D('invConv1', x, logdet1, reverse=False)
-                    x2, _ = invConv2D('invConv2', x, logdet1, reverse=False)
-                    x3, _ = invConv2D('invConv3', x, logdet1, reverse=False)
-                    x4, _ = invConv2D('invConv4', x, logdet1, reverse=False)
+                    x1, logdet = invConv2D('invConv1', x, logdet, reverse=False)
+                    x2, logdet = invConv2D('invConv2', x, logdet, reverse=False)
+                    x3, logdet = invConv2D('invConv3', x, logdet, reverse=False)
+                    x4, logdet = invConv2D('invConv4', x, logdet, reverse=False)
                     x = tf.concat([x1, x2, x3, x4], axis=3)
             x = upreshape(x)
-            logdet = tf.zeros_like(x)[:, 0, 0, 0]
-            x, _ = invConv2D('invConv', x, logdet, reverse=False)
+            x, logdet = invConv2D('invConv', x, logdet, reverse=False)
         else:
-            logdet = tf.zeros_like(x)[:, 0, 0, 0]
-            x, _ = invConv2D('invConv', x, logdet, reverse=True)
+            x, logdet = invConv2D('invConv', x, logdet, reverse=True)
             x = downshape(x)
             if scale:
                 with tf.variable_scope('ConvScale'):
-                    logdet = tf.zeros_like(x)[:, 0, 0, 0]
-                    x, _ = invConv2D('invConv1', x[:, :, :, :x.shape[3].value // 4], logdet, reverse=True)
-        return x
+                    x, logdet = invConv2D('invConv1', x[:, :, :, :x.shape[3].value // 4], logdet, reverse=True)
+        return x, logdet
 
 
 def upreshape(x): # [NHWC]
@@ -202,7 +198,7 @@ def downshape(x): # [NHWC], the inverse op of upreshape
 
 #----------------------------------------------------------------------------
 # Invert scale conv2d in quotient space
-def downscale_conv2d_layer(name, x, factor, reverse=False):
+def downscale_conv2d_layer(name, x, factor, reverse=False, logdet=0.0):
     """
     conv2d layer who downscale the channel of x, but keeps spatial size.
     Inverse map will choose an elements from the equivalent class of x,
@@ -217,19 +213,17 @@ def downscale_conv2d_layer(name, x, factor, reverse=False):
         if not reverse:
             assert x.shape[3].value % factor == 0, "factor %d of downscale conv2d layer must" \
                                                   " be factor of input channel %d!" % (factor, x.shape[3].value)
-            logdet = tf.zeros_like(x)[:, 0, 0, 0]
-            x, _ = invConv2D('downscaleConv', x, logdet, reverse=False)
+            x, logdet = invConv2D('downscaleConv', x, logdet, reverse=False)
             xs = tf.split(x, factor, axis=3)
             x = tf.math.add_n(xs) / factor
         else:
             x = tf.concat([x for _ in range(factor)], axis=3)
-            logdet = tf.zeros_like(x)[:, 0, 0, 0]
-            x, _ = invConv2D('downscaleConv', x, logdet, reverse=True)
-        return x
+            x, logdet = invConv2D('downscaleConv', x, logdet, reverse=True)
+        return x, logdet
 
 
 #----------------------------------------------------------------------------
-def inv_toRGB(name, x, fin, reverse=False):
+def inv_toRGB(name, x, fin, reverse=False, logdet=0.0):
     """
     ToRGB op with inverse in the quotient space
     :param name: name scope
@@ -242,44 +236,39 @@ def inv_toRGB(name, x, fin, reverse=False):
         if fin == 3:
             if not reverse:
                 assert fin == x.shape[3].value
-                logdet = tf.zeros_like(x)[:, 0, 0, 0]
-                x, _ = invConv2D('channel_shuffle', x, logdet, ksize=3, reverse=False)
-                x, _ = invConv2D('toRGB', x, logdet, ksize=1, reverse=False, use_fourier_forward=True)
+                x, logdet = invConv2D('channel_shuffle', x, logdet, ksize=3, reverse=False)
+                x, logdet = invConv2D('toRGB', x, logdet, ksize=1, reverse=False, use_fourier_forward=True)
 
             else:
-                logdet = tf.zeros_like(x)[:, 0, 0, 0]
-                x, _ = invConv2D('toRGB', x, logdet, ksize=1, reverse=True, use_fourier_forward=True)
-                x, _ = invConv2D('channel_shuffle', x, logdet, ksize=3, reverse=True)
+                x, logdet = invConv2D('toRGB', x, logdet, ksize=1, reverse=True, use_fourier_forward=True)
+                x, logdet = invConv2D('channel_shuffle', x, logdet, ksize=3, reverse=True)
         else:
             if not reverse:
                 assert fin == x.shape[3].value
-                logdet = tf.zeros_like(x)[:, 0, 0, 0]
-                x, _ = invConv2D('channel_shuffle', x, logdet, ksize=3, reverse=False)
+                x, logdet = invConv2D('channel_shuffle', x, logdet, ksize=3, reverse=False)
                 x = x[:, :, :, :-(x.shape[3].value % 3)]
                 xs = tf.split(x, x.shape[3].value // 3, axis=3)
                 x = tf.math.add_n(xs) / (x.shape[3].value // 3)
-                x, _ = invConv2D('toRGB', x, logdet, ksize=1, reverse=False, use_fourier_forward=True)
+                x, logdet = invConv2D('toRGB', x, logdet, ksize=1, reverse=False, use_fourier_forward=True)
 
             else:
-                logdet = tf.zeros_like(x)[:, 0, 0, 0]
-                x, _ = invConv2D('toRGB', x, logdet, ksize=1, reverse=True, use_fourier_forward=True)
+                x, logdet = invConv2D('toRGB', x, logdet, ksize=1, reverse=True, use_fourier_forward=True)
                 xs = [x for _ in range(fin // 3)] + [x[:, :, :, :fin % 3]]
                 x = tf.concat(xs, axis=3)
-                x, _ = invConv2D('channel_shuffle', x, logdet, ksize=3, reverse=True)
-        return x
+                x, logdet = invConv2D('channel_shuffle', x, logdet, ksize=3, reverse=True)
+        return x, logdet
 
 
 #----------------------------------------------------------------------------
 # Inv Module Conv
-def inv_module_conv2d_layer(x, up=False, downscale=False, reverse=False):
+def inv_module_conv2d_layer(x, up=False, downscale=False, reverse=False, logdet=0.0):
     if up:
-        x = Inv_UpSample('invupdown', x, reverse=reverse)
+        x, logdet = Inv_UpSample('invupdown', x, reverse=reverse)
     elif downscale:
-        x = downscale_conv2d_layer('downConv', x, 2, reverse=reverse)
+        x, logdet = downscale_conv2d_layer('downConv', x, 2, reverse=reverse)
     else:
-        logdet = tf.zeros_like(x)[:, 0, 0, 0]
-        x, _ = invConv2D('invConv', x, logdet, reverse=reverse)
-    return x
+        x, logdet = invConv2D('invConv', x, logdet, reverse=reverse)
+    return x, logdet
 
 
 #----------------------------------------------------------------------------
@@ -492,6 +481,7 @@ def G_quotient(
     fmap_final          = 4,
     use_noise           = False,
     report_layer        = False,
+    return_det          = False,
     **_kwargs):
 
     assert dlatent_size == fmap_final * resolution * resolution and dlatent_size % 16 == 0, "dlatent_size %d," \
@@ -525,11 +515,13 @@ def G_quotient(
 
     layer_dict = {}
 
+    reg = 0.0
+
     # Single Conv layer
-    def layer(x, layer_idx, up=False):
+    def layer(x, layer_idx, logdet=0.0, up=False):
         # downscale = (layer_idx >= 8)
         downscale = False
-        x = inv_module_conv2d_layer(x, up, downscale)
+        x, logdet = inv_module_conv2d_layer(x, up, downscale, logdet=logdet)
         if use_noise:
             if randomize_noise:
                 noise = tf.random_normal([tf.shape(x)[0], 1, x.shape[2], x.shape[3]], dtype=x.dtype)
@@ -538,45 +530,51 @@ def G_quotient(
             noise_strength = tf.get_variable('noise_strength', shape=[], initializer=tf.initializers.zeros())
             x += noise * tf.cast(noise_strength, x.dtype)
         x = inv_bias_act(x, act=act)
-        return x
+        return x, logdet
 
     # Early layers.
     with tf.variable_scope('4x4'):
         x = tf.reshape(latents_in, [-1, 4, 4, dlatent_size // 16])
         layer_dict.update({'layer4x4': x})
         with tf.variable_scope('Conv'):
-            x = layer(x, layer_idx=0)
+            x, reg = layer(x, layer_idx=0, logdet=reg)
 
-    def block(res, x):
+    def block(res, x, logdet=0.0):
         with tf.variable_scope('%dx%d' % (2**res, 2**res)):
             with tf.variable_scope('Conv0_up'):
-                x = layer(x, layer_idx=res*2-5, up=True)
+                x, logdet = layer(x, layer_idx=res*2-5, up=True, logdet=logdet)
             with tf.variable_scope('Conv1'):
-                x = layer(x, layer_idx=res*2-4, up=False)
-            return x
+                x, logdet = layer(x, layer_idx=res*2-4, up=False, logdet=logdet)
+            return x, logdet
 
-    def torgb(res, x):
+    def torgb(res, x, logdet=0.0):
         lod = resolution_log2 - res
         with tf.variable_scope('ToRGB_lod%d' % lod):
-            x = inv_toRGB('Conv', x, x.shape[3].value)
+            x, logdet = inv_toRGB('Conv', x, x.shape[3].value, logdet=logdet)
             x = inv_bias_act(x)
             return x
 
     for res in range(3, resolution_log2 + 1):
         with tf.variable_scope('%dx%d' % (2**res, 2**res)):
-            x = block(res, x)
+            x, reg = block(res, x, logdet=reg)
             layer_dict.update({'block%dx%d'% (2**res, 2**res): x})
             if res == resolution_log2:
-                x = torgb(res, x)
+                x, reg = torgb(res, x, logdet=reg)
                 layer_dict.update({'torgb': x})
 
     images_out = tf.transpose(x, [0, 3, 1, 2])
 
     assert images_out.dtype == tf.as_dtype(dtype)
     if report_layer:
-        return tf.identity(images_out, name='images_out'), layer_dict
+        if return_det:
+            return tf.identity(images_out, name='images_out'), reg, layer_dict
+        else:
+            return tf.identity(images_out, name='images_out'), layer_dict
     else:
-        return tf.identity(images_out, name='images_out')
+        if return_det:
+            return tf.identity(images_out, name='images_out'), reg
+        else:
+            return tf.identity(images_out, name='images_out')
 
 
 
@@ -622,7 +620,7 @@ def Q_infer(
             x += noise * tf.cast(noise_strength, x.dtype)
 
         downscale = False
-        x = inv_module_conv2d_layer(x, up, downscale, reverse=True)
+        x, _ = inv_module_conv2d_layer(x, up, downscale, reverse=True)
         return x
     def inv_block(res, x):
         with tf.variable_scope('%dx%d' % (2 ** res, 2 ** res)):
@@ -635,7 +633,7 @@ def Q_infer(
         lod = resolution_log2 - res
         with tf.variable_scope('ToRGB_lod%d' % lod):
             x = inv_bias_act(x, reverse=True)
-            x = inv_toRGB('Conv', x, fmap_final, reverse=True)
+            x, _ = inv_toRGB('Conv', x, fmap_final, reverse=True)
             return x
 
     x = images_in

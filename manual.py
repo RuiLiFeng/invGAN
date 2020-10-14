@@ -108,6 +108,7 @@ def reg_(r=0.0, sigma=0.1):
     # Dimension [v, u, c_in, c_out], channels switched because of
     # inverse.
     w_fft = tf.transpose(w_fft, [2, 3, 0, 1])
+    w_fft = tf.transpose(w_fft, [0, 1, 3, 2]) @ w_fft
     noise_re = tf.random.normal([64, w_fft.shape[-1].value])
     noise_im = tf.random.normal([64, w_fft.shape[-1].value])
     noise = tf.complex(noise_re, noise_im)
@@ -126,6 +127,7 @@ w_fft = tf.spectral.rfft2d(
 # Dimension [v, u, c_in, c_out], channels switched because of
 # inverse.
 w_fft = tf.transpose(w_fft, [2, 3, 0, 1])
+w_fft = tf.transpose(w_fft, [0, 1, 3, 2]) @ w_fft
 noise_re = tf.random.normal([64, w_fft.shape[-1].value])
 noise_im = tf.random.normal([64, w_fft.shape[-1].value])
 noise = tf.complex(noise_re, noise_im)
