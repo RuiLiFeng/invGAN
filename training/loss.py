@@ -242,6 +242,6 @@ def G_logistic_ns_pathreg_inv(G, D, opt, training_set, minibatch_size, pl_miniba
         # = 1 / (r^2 * (log2(r) - 1))
         # = ln(2) / (r^2 * (ln(r) - ln(2))
         #
-        reg = pl_penalty * pl_weight + 0.0001 * tf.abs(reg_det)
+        reg = pl_penalty * pl_weight + 0.01 * tf.abs(reg_det)
 
     return loss, reg
