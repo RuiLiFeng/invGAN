@@ -326,6 +326,7 @@ def G_main(
     components              = dnnlib.EasyDict(),        # Container for sub-networks. Retained between calls.
     mapping_func            = 'G_mapping',              # Build func name for the mapping network.
     synthesis_func          = 'G_synthesis_stylegan2',  # Build func name for the synthesis network.
+    return_reg              = False,
     **kwargs):                                          # Arguments for sub-networks (mapping and synthesis).
 
     # Validate arguments.
@@ -396,14 +397,28 @@ def G_main(
     deps = []
     if 'lod' in components.synthesis.vars:
         deps.append(tf.assign(components.synthesis.vars['lod'], lod_in))
-    with tf.control_dependencies(deps):
-        images_out = components.synthesis.get_output_for(dlatents, is_training=is_training, force_clean_graph=is_template_graph, **kwargs)
-
     # Return requested outputs.
-    images_out = tf.identity(images_out, name='images_out')
-    if return_dlatents:
-        return images_out, dlatents
-    return images_out
+    if return_reg:
+        with tf.control_dependencies(deps):
+            images_out, reg = components.synthesis.get_output_for(dlatents, is_training=is_training,
+                                                                  return_reg=return_reg,
+                                                                  force_clean_graph=is_template_graph, **kwargs)
+
+        # Return requested outputs.
+        images_out = tf.identity(images_out, name='images_out')
+        if return_dlatents:
+            return images_out, dlatents, reg
+        return images_out, reg
+    else:
+        with tf.control_dependencies(deps):
+            images_out = components.synthesis.get_output_for(dlatents, is_training=is_training,
+                                                             force_clean_graph=is_template_graph, **kwargs)
+
+        # Return requested outputs.
+        images_out = tf.identity(images_out, name='images_out')
+        if return_dlatents:
+            return images_out, dlatents
+        return images_out
 
 #----------------------------------------------------------------------------
 # Mapping network.
