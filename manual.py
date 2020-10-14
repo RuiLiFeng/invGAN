@@ -11,7 +11,7 @@ import pretrained_networks
 from training.invGAN import *
 from  training.iconv2d.fourier import compute_logdet
 
-network_pkl = '/gdata2/fengrl/invGAN/00002-InvGan-ffhq-64-4gpu-config-e/network-snapshot-011040.pkl'
+network_pkl = '/gdata2/fengrl/invGAN/00014-InvGan-ffhq-64-8gpu-config-e/network-snapshot-000320.pkl'
 _G, _D, Gs = pretrained_networks.load_networks(network_pkl)
 
 f = G_quotient

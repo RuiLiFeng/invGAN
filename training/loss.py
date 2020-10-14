@@ -203,7 +203,7 @@ def G_logistic_ns_pathreg_inv(G, D, opt, training_set, minibatch_size, pl_miniba
     fake_images_out, fake_dlatents_out, reg_det = G.get_output_for(latents, labels, is_training=True, return_dlatents=True, return_reg=True)
     reg_det = autosummary('reg_det', reg_det)
     fake_scores_out = D.get_output_for(fake_images_out, labels, is_training=True)
-    loss = tf.nn.softplus(-fake_scores_out) + 0.01 * tf.abs(reg_det) # -log(sigmoid(fake_scores_out))
+    loss = tf.nn.softplus(-fake_scores_out) - 0.001 * tf.abs(reg_det) # -log(sigmoid(fake_scores_out))
 
     # Path length regularization.
     with tf.name_scope('PathReg'):

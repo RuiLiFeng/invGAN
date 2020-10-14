@@ -24,11 +24,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/manual.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="429">
-              <caret line="46" lean-forward="true" selection-end-line="46" />
+            <state relative-caret-position="462">
+              <caret line="47" column="32" selection-start-line="47" selection-start-column="32" selection-end-line="47" selection-end-column="32" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -48,11 +48,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/training/loss.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="930">
-              <caret line="232" lean-forward="true" selection-start-line="232" selection-end-line="232" />
+            <state relative-caret-position="6666">
+              <caret line="205" column="101" lean-forward="true" selection-start-line="205" selection-start-column="101" selection-end-line="205" selection-end-column="101" />
             </state>
           </provider>
         </entry>
@@ -168,10 +168,10 @@
         <option value="$PROJECT_DIR$/training/iconv2d/conv2d_bijectors.py" />
         <option value="$PROJECT_DIR$/training/iconv2d/fourier.py" />
         <option value="$PROJECT_DIR$/manual.py" />
-        <option value="$PROJECT_DIR$/training/loss.py" />
         <option value="$PROJECT_DIR$/invMain.py" />
         <option value="$PROJECT_DIR$/training/networks_stylegan2.py" />
         <option value="$PROJECT_DIR$/training/invGAN.py" />
+        <option value="$PROJECT_DIR$/training/loss.py" />
       </list>
     </option>
   </component>
@@ -296,7 +296,7 @@
       <workItem from="1600860243495" duration="2639000" />
       <workItem from="1602058505555" duration="8878000" />
       <workItem from="1602137484334" duration="7923000" />
-      <workItem from="1602575951661" duration="19076000" />
+      <workItem from="1602575951661" duration="19995000" />
     </task>
     <servers />
   </component>
@@ -306,7 +306,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="165310000" />
+    <option name="totallyTimeSpent" value="166229000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -545,10 +545,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/training/loss.py">
+    <entry file="file://E:/conda/Lib/site-packages/tensorflow/python/ops/gen_linalg_ops.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="930">
-          <caret line="232" lean-forward="true" selection-start-line="232" selection-end-line="232" />
+        <state relative-caret-position="-2801">
+          <caret line="943" column="39" selection-start-line="943" selection-start-column="39" selection-end-line="943" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/manual.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="462">
+          <caret line="47" column="32" selection-start-line="47" selection-start-column="32" selection-end-line="47" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -562,20 +572,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://E:/conda/Lib/site-packages/tensorflow/python/ops/gen_linalg_ops.py">
+    <entry file="file://$PROJECT_DIR$/training/loss.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2801">
-          <caret line="943" column="39" selection-start-line="943" selection-start-column="39" selection-end-line="943" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/manual.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="429">
-          <caret line="46" lean-forward="true" selection-end-line="46" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="6666">
+          <caret line="205" column="101" lean-forward="true" selection-start-line="205" selection-start-column="101" selection-end-line="205" selection-end-column="101" />
         </state>
       </provider>
     </entry>
