@@ -200,7 +200,7 @@ def G_logistic_ns_pathreg_inv(G, D, opt, training_set, minibatch_size, pl_miniba
     _ = opt
     latents = tf.random_normal([minibatch_size] + G.input_shapes[0][1:])
     labels = training_set.get_random_labels_tf(minibatch_size)
-    fake_images_out, fake_dlatents_out = G.get_output_for(latents, labels, is_training=True, return_dlatents=True)
+    fake_images_out, fake_dlatents_out, reg_det = G.get_output_for(latents, labels, is_training=True, return_dlatents=True, return_reg=True)
     fake_scores_out = D.get_output_for(fake_images_out, labels, is_training=True)
     loss = tf.nn.softplus(-fake_scores_out) # -log(sigmoid(fake_scores_out))
 
@@ -228,7 +228,7 @@ def G_logistic_ns_pathreg_inv(G, D, opt, training_set, minibatch_size, pl_miniba
 
         # Calculate (|J*y|-a)^2.
         with tf.control_dependencies([pl_update]):
-            pl_penalty = tf.square(pl_lengths - 1.0)
+            pl_penalty = tf.square(pl_lengths - pl_mean)
             pl_penalty = autosummary('Loss/pl_penalty', pl_penalty)
 
         # Apply weight.
@@ -241,6 +241,6 @@ def G_logistic_ns_pathreg_inv(G, D, opt, training_set, minibatch_size, pl_miniba
         # = 1 / (r^2 * (log2(r) - 1))
         # = ln(2) / (r^2 * (ln(r) - ln(2))
         #
-        reg = pl_penalty * pl_weight
+        reg = pl_penalty * pl_weight + 0.0001 * tf.abs(reg_det)
 
     return loss, reg
